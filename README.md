@@ -1,3 +1,11 @@
+#fluxible-immutable-utils
+
+[![npm version](https://badge.fury.io/js/fluxible-immutable-utils.svg)](http://badge.fury.io/js/fluxible-immutable-utils)
+[![Build Status](https://travis-ci.org/yahoo/fluxible-immutable-utils.svg?branch=master)](https://travis-ci.org/yahoo/fluxible-immutable-utils)
+[![Dependency Status](https://david-dm.org/yahoo/fluxible-immutable-utils.svg)](https://david-dm.org/yahoo/fluxible-immutable-utils)
+[![devDependency Status](https://david-dm.org/yahoo/fluxible-immutable-utils/dev-status.svg)](https://david-dm.org/yahoo/fluxible-immutable-utils#info=devDependencies)
+[![Coverage Status](https://coveralls.io/repos/yahoo/fluxible-immutable-utils/badge.svg)](https://coveralls.io/r/yahoo/fluxible-immutable-utils)
+
 This package provides easy to use mixins/utils for both fluxible stores and react components.
 
 ### ComponentMixin
