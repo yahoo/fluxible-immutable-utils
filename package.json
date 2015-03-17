@@ -1,0 +1,57 @@
+{
+  "name": "fluxible-immutable-utils",
+  "author": "dhood@yahoo-inc.com",
+  "description": "A collection of utilities that provide convenience methods for using Immutable.js with a fluxible based application",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:yahoo/fluxible-immutable-utils.git#master"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "cover": "istanbul cover --dir artifacts -- _mocha tests/unit/ --recursive --reporter spec",
+    "devtest": "mocha tests/unit/ --recursive --reporter spec",
+    "test": "npm run lint && npm run cover"
+  },
+  "dependencies": {
+    "immutable": "^3.3.0",
+    "fluxible": "^0.2.0"
+  },
+  "peerDependencies": {
+    "react": "^0.12.0"
+  },
+  "devDependencies": {
+    "chai": "^1.9.2",
+    "coveralls": "^2.11.1",
+    "eslint": "^0.15.0",
+    "istanbul": "^0.3.2",
+    "jsx-test": "^0.2.2",
+    "mocha": "^2.0",
+    "precommit-hook": "^1.0"
+  },
+  "precommit": [
+    "lint",
+    "devtest"
+  ],
+  "contributors": [
+    "Mo Kouli <mkouli@yahoo-inc.com>",
+    "Marcelo Eden <eden@yahoo-inc.com>",
+    "Akshay Patel <akshayp@yahoo-inc.com>"
+  ],
+  "licenses": [
+    {
+      "type": "BSD",
+      "url": "https://github.com/yahoo/fluxible-immutable-mixin/blob/master/LICENSE.md"
+    }
+  ],
+  "keywords": [
+    "yahoo",
+    "immutable",
+    "immutablejs",
+    "immutable.js",
+    "fluxible",
+    "react",
+    "flux"
+  ]
+}

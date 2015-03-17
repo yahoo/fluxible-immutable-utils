@@ -1,0 +1,9 @@
+coverage/
+artifacts/
+tests/
+temp/
+tmp/
+*.log
+results.tap
+.eslint*
+example.js
