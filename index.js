@@ -1,4 +1,4 @@
 module.exports = {
-    ComponentMixin: require('.src/ComponentMixin'),
-    createImmutableStore: require('.src/createImmutableStore')
+    ComponentMixin: require('./src/ComponentMixin'),
+    createImmutableStore: require('./src/createImmutableStore')
 };
