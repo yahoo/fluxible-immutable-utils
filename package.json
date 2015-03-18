@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "immutable": "^3.3.0",
-    "fluxible": "^0.2.0"
+    "fluxible": ">=0.2.0 <0.3.x"
   },
   "peerDependencies": {
     "react": "^0.12.0"

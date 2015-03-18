@@ -5,7 +5,15 @@
  */
 'use strict';
 
-var createStore = require('fluxible/utils/createStore');
+function requireCreateStore() {
+    try {
+        return require('fluxible/addons/createStore');
+    } catch(err) {
+        return require('fluxible/utils/createStore');
+    }
+}
+
+var createStore = requireCreateStore();
 var Immutable = require('immutable');
 
 function merge(dest, src) {
@@ -34,7 +42,11 @@ function setState(newState, event, payload) {
     }
 
     this._state = Immutable.fromJS(newState);
-    event ? this.emit(event, payload) : this.emitChange(payload);
+    if (event) {
+        this.emit(event, payload);
+    } else {
+        this.emitChange(payload);
+    }
     return true;
 }
 
