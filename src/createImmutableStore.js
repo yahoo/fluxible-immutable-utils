@@ -9,7 +9,7 @@ function requireCreateStore() {
     try {
         return require('fluxible/addons/createStore');
     } catch(err) {
-        return require('fluxible/utils/createStore')
+        return require('fluxible/utils/createStore');
     }
 }
 
@@ -42,7 +42,11 @@ function setState(newState, event, payload) {
     }
 
     this._state = Immutable.fromJS(newState);
-    event ? this.emit(event, payload) : this.emitChange(payload);
+    if (event) {
+        this.emit(event, payload);
+    } else {
+        this.emitChange(payload);
+    }
     return true;
 }
 
