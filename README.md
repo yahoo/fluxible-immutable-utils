@@ -1,4 +1,4 @@
-#fluxible-immutable-utils
+# fluxible-immutable-utils
 
 [![npm version](https://badge.fury.io/js/fluxible-immutable-utils.svg)](http://badge.fury.io/js/fluxible-immutable-utils)
 [![Build Status](https://travis-ci.org/yahoo/fluxible-immutable-utils.svg?branch=master)](https://travis-ci.org/yahoo/fluxible-immutable-utils)
@@ -8,7 +8,7 @@
 
 This package provides easy to use mixins/utils for both fluxible stores and react components.
 
-### ComponentMixin
+## `ComponentMixin`
 A mixin that provides convenience methods for using Immutable.js inside of react components.  Note that this mixin uses the initializeComponent method for setup, and any components that use this mixin should define a 'getStateOnChange' function for generating component state (see below).
 
 This mixin has several purposes:
@@ -17,23 +17,22 @@ This mixin has several purposes:
 -  Provides a convenience method for dealing with state changes/component 
 initialization.
 
-#### Immutalizing State
+### Immutalizing State
 The mixin uses the initalizeState method to set up all default functions, and checks for a method named 'getStateOnChange' in order to get the initial state object.  If used with fluxible's FluxibleMixin, getStateOnChange will also be called whenever a store is updated (if onChange is not defined).  This allows a reduction in boilerplate by not having to define separate functions for app initialization/store updates (since components should handle state the same in either case).
 
 The mixin expects props/state to remain immutable throughout a component's lifecycle and only shallowly examines the props object when checking for data equality.  Thus it is HIGHLY recommended to pass in immutable objects as props/state to a component using this mixin (the mixin will warn when not doing so).  You may configure which objects to check by setting the ignoreImmutableObjects static property (example below).
 
-#### shouldComponentUpdate
+### shouldComponentUpdate
 The immutable mixin implements a version of shouldComponentUpdate to prevent needless re-rendering of components when the props/state haven't changed (by checking if the new props/state have been changed from the old props/state).  If a component provides its own shouldComponentUpdate method, then the default implementation will not be used.
 
-#### getStateOnChange
+### getStateOnChange
 Since ImmutableMixin must use the initializeComponent method for setting up default methods, it cannot be used by the components.  Instead, ImmutableMixin will call the 'getStateOnChange' method in getInitialState.  This method will also be called if used with the FluxibleMixin on store changes (again, only if onChange is not defined) which helps to reduce boilerplate within components.
 
-**API**
+### API
 
 #### shouldUpdate (nextProps, nextState)
 
-Utility method that is set as the `shouldComponentUpdate` method in a component unless
-it is already defined.  Checks whether the props/state of the component has changed so that we know whether to render or not.
+Utility method that is set as the `shouldComponentUpdate` method in a component unless it is already defined.  Checks whether the props/state of the component has changed so that we know whether to render or not.
 
 1. {Object} The next props object
 2. {Object} The next state object
@@ -85,5 +84,69 @@ var myObject = {
 />
 ```
 
-### createImmutableStore util
-The createImmutableStore util creates a store that handles all dehyrdating/rehydrating and setting of state.  This util will ensure that your store's state is always immutable, and will also check for state equality before emitting a change event.
+## `createImmutableStore`
+
+A helper method similar to `React.createClass` but for creating immutable [stores](https://facebook.github.io/flux/docs/overview.html#stores). Internally it wraps a call to [`'fluxible/utils/createStore`](https://github.com/yahoo/fluxible/blob/v0.2.9/utils/createStore.js).
+
+The main use case for this method is to reduce boilerplate when implementing immutable [`fluxible`](fluxible.io) stores. 
+
+The helper adds a new property and method to the created store
+* `_state` {[Map](http://facebook.github.io/immutable-js/docs/#/Map)} - The root `Immutable` where all data in the store will be saved.
+
+* `setState(newState, [event], [payload])` {Function} - This method replaces `this._state` with `newState` (unless they were the same) and then calls `this.emit(event, payload)`. 
+    * If `event` is *falsy* it will call `this.emitChange(payload)`
+    * The method also ensures that `_state` remains immutable by auto-converting `newState` to an immutable object.
+
+and creates defaults for the following [fluxible store](http://fluxible.io/api/stores.html) methods
+* [`initialize()`](http://fluxible.io/api/stores.html#constructor) - The default implementations creates a `_state` property on the store and initializes it to [`Immutable.Map`](http://facebook.github.io/immutable-js/docs/#/Map)
+
+* [`rehydrate(state)`](http://fluxible.io/api/stores.html#rehydrate-state-) - The default implementation hydrates `_state` 
+
+* [`dehydrate()`](http://fluxible.io/api/stores.html#dehydrate-) - The default implementation simply returns `_state` which is `Immutable` (due to all `Immutable` objects implementing a [`toJSON`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#toJSON_behavior) function, `_state` can be directly passed to `JSON.stringify`)
+
+**Note** that all defaults can still be overwritten when creating the store.
+
+### Example Usage
+
+```js
+// FooStore.js
+
+'use strict';
+
+var createImmutableStore = require('fluxible-immutable-utils').createImmutableStore;
+
+module.exports = createImmutableStore({
+    storeName: 'FooStore',
+    handlers: {
+        NEW_FOO: '_onNewFoo',
+        NEW_FOOS: '_onNewFoos',
+        FOO_ERROR: '_onFooError'
+    },
+
+    // public accessors
+    getFoo: function (id) {
+        return this._state.getIn(['data', id]);
+    },
+
+    getFoos: function () {
+        return this._state.get('data');
+    },
+
+    getError: function () {
+        return this._state.get('error');
+    }
+
+    // private mutators, these should only be called via dispatch
+    _onNewFoo: function (payload) {
+        this.setState(this._state.setIn(['data', payload.id], payload.foo));
+    },
+
+    _onNewFoos: function (foos) {
+        this.setState(this._state.mergeIn(['data'], foos));
+    },
+
+    _onFooError: function (error) {
+        this.setState(this._state.set('error', error));
+    }
+});
+```
