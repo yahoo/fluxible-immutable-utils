@@ -24,6 +24,19 @@ describe('ImmutableMixin component functions', function () {
         var component = jsx.renderComponent(Component, {});
         expect(component).to.be.an('object');
     });
+    it('shouldn\'t crash if getStateOnChange is not there', function () {
+        var Component = React.createClass({
+            mixins: [ImmutableMixin],
+            render: function () {
+                return null;
+            }
+        });
+        var component = jsx.renderComponent(Component, {});
+        expect(component).to.be.an('object');
+
+        // This shouldn't throw
+        component.onChange({foo: 'bar'});
+    });
     it('should replace onChange with a function that sets state', function () {
         var Component = React.createClass({
             mixins: [ImmutableMixin],
