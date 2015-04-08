@@ -94,4 +94,79 @@ describe('createImmutableStore', function () {
             done();
         });
     });
+
+    describe('#mergeState', function () {
+        beforeEach(function () {
+            this.store.setState(this.store._state.set('list1', [1, 2, 3]));
+        });
+
+        it('replaces the list with a new list', function (done) {
+            this.store.on('change', function () {
+                expect(this._state.toJS()).to.deep.equal({
+                    list1: [4]
+                });
+                done();
+            }.bind(this.store));
+
+            this.store.mergeState({'list1': [4]});
+        });
+
+        it('merges the state and emits a "change" event', function (done) {
+            this.store.on('change', function () {
+                expect(this._state.toJS()).to.deep.equal({
+                    list1: [1, 2, 3],
+                    list2: [4, 5, 6]
+                });
+                done();
+            }.bind(this.store));
+
+            this.store.mergeState({'list2': [4, 5, 6]});
+        });
+
+        it('merges the state and emit a custom event', function (done) {
+            this.store.on('custom', function () {
+                expect(this._state.toJS()).to.deep.equal({
+                    list1: [1, 2, 3],
+                    list2: [4, 5, 6]
+                });
+                done();
+            }.bind(this.store));
+
+            this.store.mergeState({'list2': [4, 5, 6]}, 'custom');
+        });
+
+        it('merges the state and passes a custom payload', function (done) {
+            var payload = {name: '_mo', type: 'AnyPlayload'};
+
+            this.store.on('change', function (data) {
+                expect(this._state.toJS()).to.deep.equal({
+                    list1: [1, 2, 3],
+                    list2: [4, 5, 6]
+                });
+                expect(data).to.deep.equal(payload);
+                done();
+            }.bind(this.store));
+
+            this.store.mergeState({'list2': [4, 5, 6]}, 'change', payload);
+        });
+
+        it('only emits the change if there the stateFragment is different', function (done) {
+            var count = 0;
+
+            this.store.emit = function () {
+                count++;
+            };
+
+            this.store.mergeState({list2: [4, 5, 6]});
+            this.store.mergeState({list2: [4, 5, 6]});
+            this.store.mergeState({list2: [4, 5, 6]});
+
+            expect(this.store._state.toJS()).to.deep.equal({
+                list1: [1, 2, 3],
+                list2: [4, 5, 6]
+            });
+            expect(count).to.equal(1);
+            done();
+        });
+    });
 });

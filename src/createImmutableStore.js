@@ -29,13 +29,23 @@ function dehydrate() {
 }
 
 function setState(newState, event, payload) {
-    if (this._state === newState) {
+    newState = Immutable.fromJS(newState);
+
+    if (this._state.equals(newState)) {
         return false;
     }
 
-    this._state = Immutable.fromJS(newState);
+    this._state = newState;
     event ? this.emit(event, payload) : this.emitChange(payload);
     return true;
+}
+
+function mergeState(stateFragment, event, payload) {
+    return this.setState(
+        this._state.merge(stateFragment),
+        event,
+        payload
+    );
 }
 
 /**
@@ -53,6 +63,7 @@ module.exports = function createImmutableStore(spec) {
         initialize: initialize,
         rehydrate: rehydrate,
         dehydrate: dehydrate,
-        setState: setState
+        setState: setState,
+        mergeState: mergeState
     }, spec));
 };
