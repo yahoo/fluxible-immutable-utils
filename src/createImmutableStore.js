@@ -29,7 +29,7 @@ function dehydrate() {
 }
 
 function setState(newState, event, payload) {
-    if (this._state === newState) {
+    if (this._state.equals(newState)) {
         return false;
     }
 
@@ -40,7 +40,7 @@ function setState(newState, event, payload) {
 
 function mergeState(stateFragment, event, payload) {
     return this.setState(
-        this._state.mergeDeep(stateFragment),
+        this._state.merge(stateFragment),
         event,
         payload
     );

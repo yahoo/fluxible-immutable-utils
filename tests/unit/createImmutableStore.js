@@ -96,9 +96,22 @@ describe('createImmutableStore', function () {
     });
 
     describe('#mergeState', function () {
-        it('merges the state and emits a "change" event', function (done) {
+        beforeEach(function () {
             this.store.setState(this.store._state.set('list1', [1, 2, 3]));
+        });
 
+        it('replaces the list with a new list', function (done) {
+            this.store.on('change', function () {
+                expect(this._state.toJS()).to.deep.equal({
+                    list1: [4]
+                });
+                done();
+            }.bind(this.store));
+
+            this.store.mergeState({'list1': [4]});
+        });
+
+        it('merges the state and emits a "change" event', function (done) {
             this.store.on('change', function () {
                 expect(this._state.toJS()).to.deep.equal({
                     list1: [1, 2, 3],
@@ -111,8 +124,6 @@ describe('createImmutableStore', function () {
         });
 
         it('merges the state and emit a custom event', function (done) {
-            this.store.setState(this.store._state.set('list1', [1, 2, 3]));
-
             this.store.on('custom', function () {
                 expect(this._state.toJS()).to.deep.equal({
                     list1: [1, 2, 3],
@@ -126,7 +137,6 @@ describe('createImmutableStore', function () {
 
         it('merges the state and passes a custom payload', function (done) {
             var payload = {name: '_mo', type: 'AnyPlayload'};
-            this.store.setState(this.store._state.set('list1', [1, 2, 3]));
 
             this.store.on('change', function (data) {
                 expect(this._state.toJS()).to.deep.equal({
@@ -147,11 +157,14 @@ describe('createImmutableStore', function () {
                 count++;
             };
 
-            this.store.mergeState({list: [1, 2, 3]});
-            this.store.mergeState({list: [1, 2, 3]});
-            this.store.mergeState({list: [1, 2, 3]});
+            this.store.mergeState({list2: [4, 5, 6]});
+            this.store.mergeState({list2: [4, 5, 6]});
+            this.store.mergeState({list2: [4, 5, 6]});
 
-            expect(this.store._state.toJS()).to.deep.equal({list: [1, 2, 3]});
+            expect(this.store._state.toJS()).to.deep.equal({
+                list1: [1, 2, 3],
+                list2: [4, 5, 6]
+            });
             expect(count).to.equal(1);
             done();
         });
