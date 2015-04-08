@@ -124,7 +124,9 @@ module.exports = {
      * @return {undefined} Does not return anything
      */
     defaultOnChange: function () {
-        this.setState(this[GET_STATE_FUNCTION].apply(this, arguments));
+        if (this[GET_STATE_FUNCTION]) {
+            this.setState(this[GET_STATE_FUNCTION].apply(this, arguments));
+        }
     },
 
     /**
