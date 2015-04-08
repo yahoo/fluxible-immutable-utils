@@ -40,7 +40,7 @@ function setState(newState, event, payload) {
 
 function mergeState(stateFragment, event, payload) {
     return this.setState(
-        this._state.merge(stateFragment),
+        this._state.mergeDeep(stateFragment),
         event,
         payload
     );
