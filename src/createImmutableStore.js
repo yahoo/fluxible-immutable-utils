@@ -29,11 +29,13 @@ function dehydrate() {
 }
 
 function setState(newState, event, payload) {
+    newState = Immutable.fromJS(newState);
+
     if (this._state.equals(newState)) {
         return false;
     }
 
-    this._state = Immutable.fromJS(newState);
+    this._state = newState;
     event ? this.emit(event, payload) : this.emitChange(payload);
     return true;
 }
