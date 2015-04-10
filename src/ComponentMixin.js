@@ -62,29 +62,34 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
     if (item1 === item2) {
         return true;
     }
-    // if either item was immutable it should have passed the previous check
-    if (isImmutable(item1) || isImmutable(item2)) {
-        return false;
-    }
+
     var i;
     var key;
     var item1Keys = Object.keys(item1);
+    var item2Keys = Object.keys(item2);
+    var item1Prop;
+    var item2Prop;
+
     for (i = 0; i < item1Keys.length; i++) {
         key = item1Keys[i];
-        var item2Prop = item2[key];
+        item1Prop = item1[key];
+        item2Prop = item2[key];
+
+        // TODO: we should remove checkNonImmutableObject because it is sloooooow.
         checkNonImmutableObject(key, item2Prop, component, objectsToIgnore);
-        if (!item2.hasOwnProperty(key) || item1[key] !== item2Prop) {
+        if (!item2.hasOwnProperty(key) || item1Prop !== item2Prop) {
             return false;
         }
     }
+
     // Test for item2's keys missing from item1.
-    var item2Keys = Object.keys(item2);
     for (i = 0; i < item2Keys.length; i++) {
         key = item2Keys[i];
         if (!item1.hasOwnProperty(key)) {
             return false;
         }
     }
+
     return true;
 }
 
@@ -109,6 +114,7 @@ module.exports = {
      */
     shouldComponentUpdate: function (nextProps, nextState) {
         var objectsToIgnore = this.objectsToIgnore;
+
         var propsEqual = shallowEqualsImmutable(this.props, nextProps, this, objectsToIgnore.props);
         var stateEqual = shallowEqualsImmutable(this.state, nextState, this, objectsToIgnore.state);
 

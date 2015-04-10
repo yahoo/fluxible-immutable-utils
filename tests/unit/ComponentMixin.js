@@ -41,6 +41,9 @@ describe('ImmutableMixin component functions', function () {
                 getInitialState: function () {
                     return null;
                 },
+                getStateOnChange: function () {
+                    return null;
+                },
                 render: function () {
                     return null;
                 }
