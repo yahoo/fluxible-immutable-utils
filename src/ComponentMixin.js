@@ -9,8 +9,6 @@ var Immutable = require('immutable');
 var isImmutable = Immutable.Iterable.isIterable;
 var isReactElement = require('react/addons').isValidElement;
 var GET_STATE_FUNCTION = 'getStateOnChange';
-var SHOULD_COMPONENT_UPDATE_FUNCTION = 'shouldComponentUpdate';
-var STORE_ON_CHANGE = 'onChange';
 
 /**
  * Make sure an item is not a non immutable object.  The only exceptions are valid
@@ -100,7 +98,6 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
  * @class ImmutableMixin
  */
 module.exports = {
-
     /**
      * Used as the default shouldComponentUpdate function.  Checks whether the props/state of the
      * component has actually changed so that we know whether or not to run the render() method.
@@ -110,11 +107,24 @@ module.exports = {
      * @param  {Object} nextState The new state object for the component.
      * @return {Boolean}           True if the component should run render(), else false.
      */
-    immutableShouldUpdate: function (nextProps, nextState) {
+    shouldComponentUpdate: function (nextProps, nextState) {
         var objectsToIgnore = this.objectsToIgnore;
         var propsEqual = shallowEqualsImmutable(this.props, nextProps, this, objectsToIgnore.props);
         var stateEqual = shallowEqualsImmutable(this.state, nextState, this, objectsToIgnore.state);
+
         return !(stateEqual && propsEqual);
+    },
+
+    componentWillMount: function () {
+        this.objectsToIgnore = this.constructor.ignoreImmutableCheck || {};
+
+        // Checks the props and state to raise warnings
+        checkObjectProperties(this.props, this, this.objectsToIgnore.props);
+        checkObjectProperties(this.state, this, this.objectsToIgnore.state);
+    },
+
+    getInitialState: function () {
+        return this[GET_STATE_FUNCTION] ? this[GET_STATE_FUNCTION]() : {};
     },
 
     /**
@@ -123,35 +133,9 @@ module.exports = {
      * @method  defaultOnChange
      * @return {undefined} Does not return anything
      */
-    defaultOnChange: function () {
+    onChange: function () {
         if (this[GET_STATE_FUNCTION]) {
             this.setState(this[GET_STATE_FUNCTION].apply(this, arguments));
         }
-    },
-
-    /**
-     * Sets up a few of the immutable methods and then returns the state of the component,
-     * after checking it has immutable props.  If shouldComponentUpdate() is not defined, then just
-     * sets the state to null.
-     * @method  getInitialState
-     * @return {Object} The initial state of the component.
-     */
-    getInitialState: function () {
-        var objectsToIgnore = this.constructor.ignoreImmutableCheck || {};
-        this.objectsToIgnore = objectsToIgnore;
-        checkObjectProperties(this.props, this, objectsToIgnore.props);
-        if (!this[STORE_ON_CHANGE]) {
-            this[STORE_ON_CHANGE] = this.defaultOnChange;
-        }
-        if (!this[SHOULD_COMPONENT_UPDATE_FUNCTION]) {
-            this[SHOULD_COMPONENT_UPDATE_FUNCTION] = this.immutableShouldUpdate;
-        }
-        var getInitialState = this[GET_STATE_FUNCTION];
-        if (getInitialState) {
-            var state = getInitialState();
-            checkObjectProperties(state, this, objectsToIgnore.state);
-            return state;
-        }
-        return null;
     }
 };
