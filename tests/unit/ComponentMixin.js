@@ -1,14 +1,74 @@
-/*globals describe,it,beforeEach*/
+/*globals describe,it,beforeEach,afterEach*/
 
 'use strict';
 
 var jsx = require('jsx-test');
 var expect = require('chai').expect;
 var React = require('react');
+var sinon = require('sinon');
 var Immutable = require('immutable');
 var ImmutableMixin = require('../../src/ComponentMixin');
 
 describe('ImmutableMixin component functions', function () {
+    describe('#componentWillMount', function () {
+        beforeEach(function () {
+            sinon.spy(console, 'warn');
+        });
+
+        afterEach(function () {
+            console.warn.restore();
+        });
+
+        it('should raise warkings if non immutable props are passed', function () {
+            var Component = React.createClass({
+                displayName: 'MyComponent',
+                mixins: [ImmutableMixin],
+                render: function () {
+                    return null;
+                }
+            });
+
+            jsx.renderComponent(Component, {data: {list: [1, 2, 3]}});
+            expect(
+                console.warn.calledWith('WARN: component: MyComponent received non-immutable object: data')
+            ).to.equal(true);
+        });
+
+        it('does not raise warning if props or state is null', function () {
+            var Component = React.createClass({
+                displayName: 'MyComponent',
+                mixins: [ImmutableMixin],
+                getInitialState: function () {
+                    return null;
+                },
+                render: function () {
+                    return null;
+                }
+            });
+
+            jsx.renderComponent(Component, null);
+            expect(console.warn.callCount).to.equal(0);
+        });
+
+        it('should raise warkings if there are non immutable states', function () {
+            var Component = React.createClass({
+                displayName: 'YComponent',
+                mixins: [ImmutableMixin],
+                getInitialState: function () {
+                    return {list: [1, 2, 3]};
+                },
+                render: function () {
+                    return null;
+                }
+            });
+
+            jsx.renderComponent(Component, {});
+            expect(
+                console.warn.calledWith('WARN: component: YComponent received non-immutable object: list')
+            ).to.equal(true);
+        });
+    });
+
     describe('#getStateOnChange', function () {
         it('should merge the getInitialState with getStateOnChange', function () {
             var Component = React.createClass({

@@ -28,7 +28,8 @@
     "istanbul": "^0.3.2",
     "jsx-test": "^0.3.0",
     "mocha": "^2.0",
-    "pre-commit": "^1.0"
+    "pre-commit": "^1.0",
+    "sinon": "^1.14.1"
   },
   "pre-commit": [
     "lint",
