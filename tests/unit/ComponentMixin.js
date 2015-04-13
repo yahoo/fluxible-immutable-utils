@@ -189,5 +189,20 @@ describe('ImmutableMixin component functions', function () {
             assertComponentUpdate(props, {list: props.list}, true);
             assertComponentUpdate(props, {foo: 'bar', list: state.list}, true);
         });
+
+        it('allows the shouldComponentUpdate to be overriden', function () {
+            var Component = React.createClass({
+                mixins: [ImmutableMixin],
+                shouldComponentUpdate: function () {
+                    return 'override';
+                },
+                render: function () {
+                    return null;
+                }
+            });
+
+            component = jsx.renderComponent(Component, props);
+            assertComponentUpdate({}, {}, 'override');
+        });
     });
 });

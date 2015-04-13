@@ -75,7 +75,6 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
         item1Prop = item1[key];
         item2Prop = item2[key];
 
-        // TODO: we should remove checkNonImmutableObject because it is sloooooow.
         checkNonImmutableObject(key, item2Prop, component, objectsToIgnore);
         if (!item2.hasOwnProperty(key) || item1Prop !== item2Prop) {
             return false;
@@ -93,6 +92,38 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
     return true;
 }
 
+var defaults = {
+    /**
+     * Used as the default shouldComponentUpdate function.  Checks whether the props/state of the
+     * component has actually changed so that we know whether or not to run the render() method.
+     * Since all state/props are immutable, we can use a simple reference check in the majority of cases.
+     * @method shouldUpdate
+     * @param  {Object} nextProps The new props object for the component.
+     * @param  {Object} nextState The new state object for the component.
+     * @return {Boolean}           True if the component should run render(), else false.
+     */
+    shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+        var objectsToIgnore = this.objectsToIgnore;
+
+        var propsEqual = shallowEqualsImmutable(this.props, nextProps, this, objectsToIgnore.props);
+        var stateEqual = shallowEqualsImmutable(this.state, nextState, this, objectsToIgnore.state);
+
+        return !(stateEqual && propsEqual);
+    },
+
+    /**
+     * A default onChange function that sets the the components state from the getStateOnChange
+     * method.  This is only set if a component does not implement its own onChange function.
+     * @method  defaultOnChange
+     * @return {undefined} Does not return anything
+     */
+    onChange: function onChange() {
+        if (this[GET_STATE_FUNCTION]) {
+            this.setState(this[GET_STATE_FUNCTION].apply(this, arguments));
+        }
+    }
+};
+
 /**
  * React mixin for making components state/props immutable using the immutable.js library.  This
  * mixin ensures that the state and props of the component always contain immutable objects, allowing
@@ -103,26 +134,12 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
  * @class ImmutableMixin
  */
 module.exports = {
-    /**
-     * Used as the default shouldComponentUpdate function.  Checks whether the props/state of the
-     * component has actually changed so that we know whether or not to run the render() method.
-     * Since all state/props are immutable, we can use a simple reference check in the majority of cases.
-     * @method shouldUpdate
-     * @param  {Object} nextProps The new props object for the component.
-     * @param  {Object} nextState The new state object for the component.
-     * @return {Boolean}           True if the component should run render(), else false.
-     */
-    shouldComponentUpdate: function (nextProps, nextState) {
-        var objectsToIgnore = this.objectsToIgnore;
-
-        var propsEqual = shallowEqualsImmutable(this.props, nextProps, this, objectsToIgnore.props);
-        var stateEqual = shallowEqualsImmutable(this.state, nextState, this, objectsToIgnore.state);
-
-        return !(stateEqual && propsEqual);
-    },
-
     componentWillMount: function () {
         this.objectsToIgnore = this.constructor.ignoreImmutableCheck || {};
+
+        // Set default methods if the there is no override
+        this.onChange = this.onChange || defaults.onChange;
+        this.shouldComponentUpdate = this.shouldComponentUpdate || defaults.shouldComponentUpdate;
 
         // Checks the props and state to raise warnings
         checkObjectProperties(this.props, this, this.objectsToIgnore.props);
@@ -131,17 +148,5 @@ module.exports = {
 
     getInitialState: function () {
         return this[GET_STATE_FUNCTION] ? this[GET_STATE_FUNCTION]() : {};
-    },
-
-    /**
-     * A default onChange function that sets the the components state from the getStateOnChange
-     * method.  This is only set if a component does not implement its own onChange function.
-     * @method  defaultOnChange
-     * @return {undefined} Does not return anything
-     */
-    onChange: function () {
-        if (this[GET_STATE_FUNCTION]) {
-            this.setState(this[GET_STATE_FUNCTION].apply(this, arguments));
-        }
     }
 };
