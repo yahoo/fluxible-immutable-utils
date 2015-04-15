@@ -10,6 +10,94 @@ var Immutable = require('immutable');
 var ImmutableMixin = require('../../src/ComponentMixin');
 
 describe('ImmutableMixin component functions', function () {
+    describe('#objectsToIgnore', function () {
+        beforeEach(function () {
+            sinon.spy(console, 'warn');
+        });
+
+        afterEach(function () {
+            console.warn.restore();
+        });
+
+        it('should bypass certain props fields if are ignored', function () {
+            var Component = React.createClass({
+                displayName: 'MyComponent',
+                mixins: [ImmutableMixin],
+                objectsToIgnore: {
+                    props: {
+                        data: true
+                    }
+                },
+                render: function () {
+                    return null;
+                }
+            });
+
+            jsx.renderComponent(Component, {data: {list: [1, 2, 3]}});
+            expect(console.warn.callCount).to.equal(0);
+        });
+
+        it('should warn certain if next state is mutable', function (done) {
+            var Component = React.createClass({
+                displayName: 'MyComponent',
+                mixins: [ImmutableMixin],
+                render: function () {
+                    return null;
+                }
+            });
+
+            var comp = jsx.renderComponent(Component, {});
+            comp.setState({testData: {list: [1, 2, 3]}}, function () {
+                expect(
+                    console.warn.calledWith('WARN: component: MyComponent received non-immutable object: testData')
+                ).to.equal(true);
+                done();
+            });
+        });
+
+        it('should bypass certain state fields if are ignored', function (done) {
+            var Component = React.createClass({
+                displayName: 'MyComponent',
+                mixins: [ImmutableMixin],
+                objectsToIgnore: {
+                    state: {
+                        testData: true
+                    }
+                },
+                render: function () {
+                    return null;
+                }
+            });
+
+            var comp = jsx.renderComponent(Component, {});
+            comp.setState({testData: {list: [1, 2, 3]}}, function () {
+                expect(console.warn.callCount).to.equal(0);
+                done();
+            });
+        });
+
+        it('should merge w/ default certain state fields if are ignored', function (done) {
+            var Component = React.createClass({
+                displayName: 'MyComponent',
+                mixins: [ImmutableMixin],
+                objectsToIgnore: {
+                    state: {
+                        testData: true
+                    }
+                },
+                render: function () {
+                    return React.createElement('div', {}, this.props.children);
+                }
+            });
+
+            var comp = jsx.renderComponent(Component, {}, ['foo', 'bar']);
+            comp.setState({testData: {list: [1, 2, 3]}}, function () {
+                expect(console.warn.callCount).to.equal(0);
+                done();
+            });
+        });
+    });
+
     describe('#componentWillMount', function () {
         beforeEach(function () {
             sinon.spy(console, 'warn');
@@ -19,7 +107,7 @@ describe('ImmutableMixin component functions', function () {
             console.warn.restore();
         });
 
-        it('should raise warkings if non immutable props are passed', function () {
+        it('should raise warnings if non immutable props are passed', function () {
             var Component = React.createClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
@@ -32,6 +120,19 @@ describe('ImmutableMixin component functions', function () {
             expect(
                 console.warn.calledWith('WARN: component: MyComponent received non-immutable object: data')
             ).to.equal(true);
+        });
+
+        it('should not raise warnings for children', function () {
+            var Component = React.createClass({
+                displayName: 'MyComponent',
+                mixins: [ImmutableMixin],
+                render: function () {
+                    return React.createElement('div', {}, this.props.children);
+                }
+            });
+
+            jsx.renderComponent(Component, {}, ['foo', 'bar']);
+            expect(console.warn.callCount).to.equal(0);
         });
 
         it('does not raise warning if props or state is null', function () {

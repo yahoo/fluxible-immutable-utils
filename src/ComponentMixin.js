@@ -9,6 +9,7 @@ var Immutable = require('immutable');
 var isImmutable = Immutable.Iterable.isIterable;
 var isReactElement = require('react/addons').isValidElement;
 var GET_STATE_FUNCTION = 'getStateOnChange';
+var utils = require('./utils');
 
 /**
  * Make sure an item is not a non immutable object.  The only exceptions are valid
@@ -20,12 +21,12 @@ var GET_STATE_FUNCTION = 'getStateOnChange';
  * @return {Boolean}    True if non-immutable object, else false.
  */
 function checkNonImmutableObject(key, item, component, objectsToIgnore) {
-    objectsToIgnore = objectsToIgnore || {};
     if (item
         && typeof item === 'object'
         && !isReactElement(item)
         && !isImmutable(item)
-        && !objectsToIgnore[key]) {
+        && !objectsToIgnore[key]
+    ) {
         console.warn('WARN: component: ' + component.constructor.displayName
             + ' received non-immutable object: ' + key);
     }
@@ -70,6 +71,11 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
     var item1Prop;
     var item2Prop;
 
+    // Different key set length, no need to proceed
+    if (item1Keys.length !== item2Keys.length) {
+        return false;
+    }
+
     for (i = 0; i < item1Keys.length; i++) {
         key = item1Keys[i];
         item1Prop = item1[key];
@@ -81,18 +87,24 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
         }
     }
 
-    // Test for item2's keys missing from item1.
-    for (i = 0; i < item2Keys.length; i++) {
-        key = item2Keys[i];
-        if (!item1.hasOwnProperty(key)) {
-            return false;
-        }
-    }
-
     return true;
 }
 
 var defaults = {
+    /**
+     * Get default objectsToIgnore. This is not a hardcoded object
+     * since it might be mutable
+     * @return {Object} by default avoid props.children
+     */
+    getObjectsToIgnore: function () {
+        return {
+            props: {
+                // Always ignore children props since it's special
+                children: true
+            }
+        };
+    },
+
     /**
      * Used as the default shouldComponentUpdate function.  Checks whether the props/state of the
      * component has actually changed so that we know whether or not to run the render() method.
@@ -104,6 +116,10 @@ var defaults = {
      */
     shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
         var objectsToIgnore = this.objectsToIgnore;
+
+        // Still has to check this in case nextState/nextProps contains mutables
+        checkObjectProperties(nextProps, this, objectsToIgnore.props);
+        checkObjectProperties(nextState, this, objectsToIgnore.state);
 
         var propsEqual = shallowEqualsImmutable(this.props, nextProps, this, objectsToIgnore.props);
         var stateEqual = shallowEqualsImmutable(this.state, nextState, this, objectsToIgnore.state);
@@ -135,7 +151,15 @@ var defaults = {
  */
 module.exports = {
     componentWillMount: function () {
-        this.objectsToIgnore = this.constructor.ignoreImmutableCheck || {};
+        var defaultObjectsToIgnore = defaults.getObjectsToIgnore();
+
+        if (!this.objectsToIgnore) {
+            this.objectsToIgnore = this.constructor.ignoreImmutableCheck || {};
+        }
+
+        // Since merge deep might be overkill for just 1 use case
+        this.objectsToIgnore.props = utils.merge(defaultObjectsToIgnore.props, this.objectsToIgnore.props);
+        this.objectsToIgnore.state = utils.merge(defaultObjectsToIgnore.state, this.objectsToIgnore.state);
 
         // Set default methods if the there is no override
         this.onChange = this.onChange || defaults.onChange;
