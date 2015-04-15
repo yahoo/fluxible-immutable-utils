@@ -37,7 +37,7 @@ describe('ImmutableMixin component functions', function () {
             expect(console.warn.callCount).to.equal(0);
         });
 
-        it('should bypass certain state fields if are ignored', function (done) {
+        it('should warn certain if next state is mutable', function (done) {
             var Component = React.createClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
@@ -48,7 +48,30 @@ describe('ImmutableMixin component functions', function () {
 
             var comp = jsx.renderComponent(Component, {});
             comp.setState({testData: {list: [1, 2, 3]}}, function () {
-                console.warn.calledWith('WARN: component: MyComponent received non-immutable object: testData');
+                expect(
+                    console.warn.calledWith('WARN: component: MyComponent received non-immutable object: testData')
+                ).to.equal(true);
+                done();
+            });
+        });
+
+        it('should bypass certain state fields if are ignored', function (done) {
+            var Component = React.createClass({
+                displayName: 'MyComponent',
+                mixins: [ImmutableMixin],
+                objectsToIgnore: {
+                    state: {
+                        testData: true
+                    }
+                },
+                render: function () {
+                    return null;
+                }
+            });
+
+            var comp = jsx.renderComponent(Component, {});
+            comp.setState({testData: {list: [1, 2, 3]}}, function () {
+                expect(console.warn.callCount).to.equal(0);
                 done();
             });
         });
