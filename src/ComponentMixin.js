@@ -162,8 +162,8 @@ module.exports = {
         this.objectsToIgnore.state = utils.merge(defaultObjectsToIgnore.state, this.objectsToIgnore.state);
 
         // Set default methods if the there is no override
-        this.onChange = this.onChange || defaults.onChange;
-        this.shouldComponentUpdate = this.shouldComponentUpdate || defaults.shouldComponentUpdate;
+        this.onChange = this.onChange || defaults.onChange.bind(this);
+        this.shouldComponentUpdate = this.shouldComponentUpdate || defaults.shouldComponentUpdate.bind(this);
 
         // Checks the props and state to raise warnings
         checkObjectProperties(this.props, this, this.objectsToIgnore.props);
