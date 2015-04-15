@@ -26,7 +26,7 @@
     "coveralls": "^2.11.1",
     "eslint": "^0.17.0",
     "istanbul": "^0.3.2",
-    "jsx-test": "^0.3.0",
+    "jsx-test": "^0.4.1",
     "mocha": "^2.0",
     "pre-commit": "^1.0",
     "sinon": "^1.14.1"

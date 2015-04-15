@@ -25,7 +25,8 @@ function checkNonImmutableObject(key, item, component, objectsToIgnore) {
         && typeof item === 'object'
         && !isReactElement(item)
         && !isImmutable(item)
-        && !objectsToIgnore[key]) {
+        && !objectsToIgnore[key]
+    ) {
         console.warn('WARN: component: ' + component.constructor.displayName
             + ' received non-immutable object: ' + key);
     }
@@ -70,6 +71,11 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
     var item1Prop;
     var item2Prop;
 
+    // Different key set length, no need to proceed
+    if (item1Keys.length !== item2Keys.length) {
+        return false;
+    }
+
     for (i = 0; i < item1Keys.length; i++) {
         key = item1Keys[i];
         item1Prop = item1[key];
@@ -81,18 +87,17 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
         }
     }
 
-    // Test for item2's keys missing from item1.
-    for (i = 0; i < item2Keys.length; i++) {
-        key = item2Keys[i];
-        if (!item1.hasOwnProperty(key)) {
-            return false;
-        }
-    }
-
     return true;
 }
 
 var defaults = {
+    // Always ignore children props since it's special
+    objectsToIgnore: {
+        props: {
+            children: true
+        }
+    },
+
     /**
      * Used as the default shouldComponentUpdate function.  Checks whether the props/state of the
      * component has actually changed so that we know whether or not to run the render() method.
@@ -104,6 +109,10 @@ var defaults = {
      */
     shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
         var objectsToIgnore = this.objectsToIgnore;
+
+        // Still has to check this in case nextState/nextProps contains mutables
+        checkObjectProperties(nextProps, this, objectsToIgnore.props);
+        checkObjectProperties(nextState, this, objectsToIgnore.state);
 
         var propsEqual = shallowEqualsImmutable(this.props, nextProps, this, objectsToIgnore.props);
         var stateEqual = shallowEqualsImmutable(this.state, nextState, this, objectsToIgnore.state);
@@ -135,7 +144,9 @@ var defaults = {
  */
 module.exports = {
     componentWillMount: function () {
-        this.objectsToIgnore = this.constructor.ignoreImmutableCheck || {};
+        if (!this.objectsToIgnore) {
+            this.objectsToIgnore = this.constructor.ignoreImmutableCheck || defaults.objectsToIgnore;
+        }
 
         // Set default methods if the there is no override
         this.onChange = this.onChange || defaults.onChange;
