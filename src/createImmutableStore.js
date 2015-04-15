@@ -7,14 +7,7 @@
 
 var createStore = require('fluxible/utils/createStore');
 var Immutable = require('immutable');
-
-function merge(dest, src) {
-    Object.keys(src).forEach(function cb(prop) {
-        dest[prop] = src[prop];
-    });
-
-    return dest;
-}
+var utils = require('./utils');
 
 function initialize() {
     this._state = Immutable.Map();
@@ -59,7 +52,7 @@ function mergeState(stateFragment, event, payload) {
  * @return {Store} Store class
  **/
 module.exports = function createImmutableStore(spec) {
-    return createStore(merge({
+    return createStore(utils.merge({
         initialize: initialize,
         rehydrate: rehydrate,
         dehydrate: dehydrate,

@@ -75,6 +75,27 @@ describe('ImmutableMixin component functions', function () {
                 done();
             });
         });
+
+        it('should merge w/ default certain state fields if are ignored', function (done) {
+            var Component = React.createClass({
+                displayName: 'MyComponent',
+                mixins: [ImmutableMixin],
+                objectsToIgnore: {
+                    state: {
+                        testData: true
+                    }
+                },
+                render: function () {
+                    return React.createElement('div', {}, this.props.children);
+                }
+            });
+
+            var comp = jsx.renderComponent(Component, {}, ['foo', 'bar']);
+            comp.setState({testData: {list: [1, 2, 3]}}, function () {
+                expect(console.warn.callCount).to.equal(0);
+                done();
+            });
+        });
     });
 
     describe('#componentWillMount', function () {

@@ -9,6 +9,7 @@ var Immutable = require('immutable');
 var isImmutable = Immutable.Iterable.isIterable;
 var isReactElement = require('react/addons').isValidElement;
 var GET_STATE_FUNCTION = 'getStateOnChange';
+var utils = require('./utils');
 
 /**
  * Make sure an item is not a non immutable object.  The only exceptions are valid
@@ -20,7 +21,6 @@ var GET_STATE_FUNCTION = 'getStateOnChange';
  * @return {Boolean}    True if non-immutable object, else false.
  */
 function checkNonImmutableObject(key, item, component, objectsToIgnore) {
-    objectsToIgnore = objectsToIgnore || {};
     if (item
         && typeof item === 'object'
         && !isReactElement(item)
@@ -91,11 +91,18 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
 }
 
 var defaults = {
-    // Always ignore children props since it's special
-    objectsToIgnore: {
-        props: {
-            children: true
-        }
+    /**
+     * Get default objectsToIgnore. This is not a hardcoded object
+     * since it might be mutable
+     * @return {Object} by default avoid props.children
+     */
+    getObjectsToIgnore: function () {
+        return {
+            props: {
+                // Always ignore children props since it's special
+                children: true
+            }
+        };
     },
 
     /**
@@ -144,9 +151,15 @@ var defaults = {
  */
 module.exports = {
     componentWillMount: function () {
+        var defaultObjectsToIgnore = defaults.getObjectsToIgnore();
+
         if (!this.objectsToIgnore) {
-            this.objectsToIgnore = this.constructor.ignoreImmutableCheck || defaults.objectsToIgnore;
+            this.objectsToIgnore = this.constructor.ignoreImmutableCheck || {};
         }
+
+        // Since merge deep might be overkill for just 1 use case
+        this.objectsToIgnore.props = utils.merge(defaultObjectsToIgnore.props, this.objectsToIgnore.props);
+        this.objectsToIgnore.state = utils.merge(defaultObjectsToIgnore.state, this.objectsToIgnore.state);
 
         // Set default methods if the there is no override
         this.onChange = this.onChange || defaults.onChange;
