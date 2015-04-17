@@ -8,6 +8,10 @@
 
 This package provides easy to use mixins/utils for both fluxible stores and react components.
 
+```bash
+$ npm install --save fluxible-immutable-utils
+```
+
 ## `ComponentMixin`
 A mixin that provides convenience methods for using Immutable.js inside of react components.  Note that this mixin uses the initializeComponent method for setup, and any components that use this mixin should define a 'getStateOnChange' function for generating component state (see below).
 
