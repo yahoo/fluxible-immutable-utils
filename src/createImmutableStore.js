@@ -5,9 +5,9 @@
  */
 'use strict';
 
-var createStore = require('fluxible/utils/createStore');
 var Immutable = require('immutable');
 var utils = require('./utils');
+var createStore = require('fluxible/addons/createStore');
 
 function initialize() {
     this._state = Immutable.Map();
