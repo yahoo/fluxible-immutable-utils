@@ -116,9 +116,11 @@ module.exports = React.createClass({
 });
 ```
 
-If you want to just pass around a common config, then use:
-'var ImmutableMixin = require('fluxible-immutable-utils').createComponentMixn(myConfig);'
-Where myConfig is the same structure as the statics above.
+If you want to just pass around a common config, then use:  
+```jsx
+var ImmutableMixin = require('fluxible-immutable-utils').createComponentMixin(myConfig);
+```
+Where myConfig has the same structure as the statics above.
 
 ## `createImmutableStore`
 
