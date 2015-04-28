@@ -13,19 +13,19 @@ var utils = require('./utils');
 
 /**
  * Make sure an item is not a non immutable object.  The only exceptions are valid
- * react elements.
+ * react elements and objects specifically set to be ignored.
  * @param  {String}  key  The item to test's key
  * @param  {Any}  item  The item to test
  * @param  {Object}  component  The component
- * @param  {Object}  objectsToIgnore  Objects to skip a check for
+ * @param  {Object}  ignoreImmutableCheck  Objects to skip a check for
  * @return {Boolean}    True if non-immutable object, else false.
  */
-function checkNonImmutableObject(key, item, component, objectsToIgnore) {
+function checkNonImmutableObject(key, item, component, ignoreImmutableCheck) {
     if (item
         && typeof item === 'object'
         && !isReactElement(item)
         && !isImmutable(item)
-        && !objectsToIgnore[key]
+        && !ignoreImmutableCheck[key]
     ) {
         console.warn('WARN: component: ' + component.constructor.displayName
             + ' received non-immutable object: ' + key);
@@ -36,15 +36,15 @@ function checkNonImmutableObject(key, item, component, objectsToIgnore) {
  * Check that all an objects fields are either primitives or immutable objects.
  * @param  {Object} object    The object to check
  * @param  {Object} component The component being checked
- * @param  {Object}  objectsToIgnore  Objects to skip a check for
+ * @param  {Object}  ignoreImmutableCheck  Objects to skip a check for
  * @return {Undefined} none
  */
-function checkObjectProperties(object, component, objectsToIgnore) {
+function checkObjectProperties(object, component, ignoreImmutableCheck) {
     if (!object || typeof object !== 'object') {
         return;
     }
     Object.keys(object).forEach(function objectIterator(key) {
-        checkNonImmutableObject(key, object[key], component, objectsToIgnore);
+        checkNonImmutableObject(key, object[key], component, ignoreImmutableCheck);
     });
 }
 
@@ -56,10 +56,10 @@ function checkObjectProperties(object, component, objectsToIgnore) {
  * @param  {Object} item1 The first object to compare
  * @param  {Object} item2 The second object to compare
  * @param  {Object} component The component being examined
- * @param  {Object}  objectsToIgnore  Objects to skip a check for
+ * @param  {Object}  ignoreImmutableCheck  Objects to skip a check for
  * @return {Boolean}      True if the objects are shallowly equavalent, else false.
  */
-function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
+function shallowEqualsImmutable(item1, item2, component, ignoreImmutableCheck) {
     if (item1 === item2) {
         return true;
     }
@@ -71,20 +71,22 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
     var item1Prop;
     var item2Prop;
 
-    // Different key set length, no need to proceed
-    if (item1Keys.length !== item2Keys.length) {
-        return false;
-    }
-
-    for (i = 0; i < item1Keys.length; i++) {
-        key = item1Keys[i];
-        item1Prop = item1[key];
+    // check item2keys so that we can also check for any non-immutable objects
+    for (i = 0; i < item2Keys.length; i++) {
+        key = item2Keys[i];
         item2Prop = item2[key];
+        item1Prop = item1[key];
 
-        checkNonImmutableObject(key, item2Prop, component, objectsToIgnore);
-        if (!item2.hasOwnProperty(key) || item1Prop !== item2Prop) {
+        checkNonImmutableObject(key, item2Prop, component, ignoreImmutableCheck);
+        if (!item1.hasOwnProperty(key) || item1Prop !== item2Prop) {
             return false;
         }
+    }
+
+    // Different key set length, no need to proceed..check it here because we still
+    // want to check all of item2's objects to see if any are non-immutable.
+    if (item1Keys.length !== item2Keys.length) {
+        return false;
     }
 
     return true;
@@ -92,11 +94,11 @@ function shallowEqualsImmutable(item1, item2, component, objectsToIgnore) {
 
 var defaults = {
     /**
-     * Get default objectsToIgnore. This is not a hardcoded object
+     * Get default ignoreImmutableCheck objects. This is not a hardcoded object
      * since it might be mutable
      * @return {Object} by default avoid props.children
      */
-    getObjectsToIgnore: function () {
+    getIgnoreImmutableCheck: function () {
         return {
             props: {
                 // Always ignore children props since it's special
@@ -115,14 +117,10 @@ var defaults = {
      * @return {Boolean}           True if the component should run render(), else false.
      */
     shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-        var objectsToIgnore = this.objectsToIgnore;
+        var ignoreImmutableCheck = this.ignoreImmutableCheck;
 
-        // Still has to check this in case nextState/nextProps contains mutables
-        checkObjectProperties(nextProps, this, objectsToIgnore.props);
-        checkObjectProperties(nextState, this, objectsToIgnore.state);
-
-        var propsEqual = shallowEqualsImmutable(this.props, nextProps, this, objectsToIgnore.props);
-        var stateEqual = shallowEqualsImmutable(this.state, nextState, this, objectsToIgnore.state);
+        var propsEqual = shallowEqualsImmutable(this.props, nextProps, this, ignoreImmutableCheck.props);
+        var stateEqual = shallowEqualsImmutable(this.state, nextState, this, ignoreImmutableCheck.state);
 
         return !(stateEqual && propsEqual);
     },
@@ -151,23 +149,22 @@ var defaults = {
  */
 module.exports = {
     componentWillMount: function () {
-        var defaultObjectsToIgnore = defaults.getObjectsToIgnore();
+        var defaultIgnoreImmutableCheck = defaults.getIgnoreImmutableCheck();
 
-        if (!this.objectsToIgnore) {
-            this.objectsToIgnore = this.constructor.ignoreImmutableCheck || {};
+        if (!this.ignoreImmutableCheck) {
+            this.ignoreImmutableCheck = this.constructor.ignoreImmutableCheck || {};
         }
-
-        // Since merge deep might be overkill for just 1 use case
-        this.objectsToIgnore.props = utils.merge(defaultObjectsToIgnore.props, this.objectsToIgnore.props);
-        this.objectsToIgnore.state = utils.merge(defaultObjectsToIgnore.state, this.objectsToIgnore.state);
+        // merge any custom configs over defaults
+        this.ignoreImmutableCheck.props = utils.merge(defaultIgnoreImmutableCheck.props, this.ignoreImmutableCheck.props);
+        this.ignoreImmutableCheck.state = utils.merge(defaultIgnoreImmutableCheck.state, this.ignoreImmutableCheck.state);
 
         // Set default methods if the there is no override
         this.onChange = this.onChange || defaults.onChange.bind(this);
         this.shouldComponentUpdate = this.shouldComponentUpdate || defaults.shouldComponentUpdate.bind(this);
 
         // Checks the props and state to raise warnings
-        checkObjectProperties(this.props, this, this.objectsToIgnore.props);
-        checkObjectProperties(this.state, this, this.objectsToIgnore.state);
+        checkObjectProperties(this.props, this, this.ignoreImmutableCheck.props);
+        checkObjectProperties(this.state, this, this.ignoreImmutableCheck.state);
     },
 
     getInitialState: function () {

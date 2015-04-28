@@ -23,7 +23,7 @@ describe('ImmutableMixin component functions', function () {
             var Component = React.createClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
-                objectsToIgnore: {
+                ignoreImmutableCheck: {
                     props: {
                         data: true
                     }
@@ -59,7 +59,7 @@ describe('ImmutableMixin component functions', function () {
             var Component = React.createClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
-                objectsToIgnore: {
+                ignoreImmutableCheck: {
                     state: {
                         testData: true
                     }
@@ -80,7 +80,7 @@ describe('ImmutableMixin component functions', function () {
             var Component = React.createClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
-                objectsToIgnore: {
+                ignoreImmutableCheck: {
                     state: {
                         testData: true
                     }
@@ -282,7 +282,14 @@ describe('ImmutableMixin component functions', function () {
         });
 
         it('should return true if a new prop value is added', function () {
+            assertComponentUpdate(props, state, false);
             props.test = 'baz';
+            assertComponentUpdate(props, state, true);
+        });
+
+        it('should return true if a new prop value is removed', function () {
+            assertComponentUpdate(props, state, false);
+            delete props.foo;
             assertComponentUpdate(props, state, true);
         });
 
