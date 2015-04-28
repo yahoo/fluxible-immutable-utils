@@ -59,12 +59,6 @@ var ImmutableMixin = require('fluxible-immutable-utils').ComponentMixin;
 module.exports = React.createClass({
     displayName: 'MyReactComponent',
     mixins: [ImmutableMixin],
-    statics: {
-        ignoreImmutableCheck:  {
-            someKey: true,
-            anotherKey: true
-        }
-    },
     getStateOnChange: function () {
         if (!this.state) {
             //initialize here if needed
@@ -87,6 +81,44 @@ var myObject = {
     aNonImmutableObject={myObject} // will cause a console.warn statement because we are passing a non-immutable object
 />
 ```
+
+#### Configuring the Mixin
+If you are using third party libraries/have a special case where you don't want the mixin to consider some of the keys of props/state, you have two options.  First, you can set the ignoreImmutableCheck object to skip the check for immutability for any keys you decide.  Similarly, setting keys in keysToIgnoreOnUpdate will ignore any keys when checking for props/state equality.  You must set these values inside a component's `statics` field (or in a config, see below), and they must be set seperately for props/state.  
+
+**Example**
+
+```jsx
+// MyReactComponent.jsx
+
+var ImmutableMixin = require('fluxible-immutable-utils').ComponentMixin;
+
+module.exports = React.createClass({
+    displayName: 'MyReactComponent',
+    mixins: [ImmutableMixin],
+    statics: {
+        ignoreImmutableCheck:  {
+            props: {
+                someKey: true // don't check someKey for immutablility in props
+            },
+            state: {
+                anotherKey: true // don't check anotherKey for immutablility in props
+            }
+            
+        },
+        keysToIgnoreOnUpdate: {
+            props: {
+                messages: true // don't consider messages when checking for props equality
+            }
+        }
+    },
+
+    ...rest of component follows...
+});
+```
+
+If you want to just pass around a common config, then use:
+'var ImmutableMixin = require('fluxible-immutable-utils').createComponentMixn(myConfig);'
+Where myConfig is the same structure as the statics above.
 
 ## `createImmutableStore`
 
