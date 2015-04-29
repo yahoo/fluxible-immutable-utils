@@ -105,11 +105,6 @@ module.exports = React.createClass({
                 anotherKey: 'SKIP_SHOULD_UPDATE' // don't check anotherKey for immutablility in props, AND don't check its value is shouldComponentUpdate
             }
             
-        },
-        keysToIgnoreOnUpdate: {
-            props: {
-                messages: true // don't consider messages when checking for props equality
-            }
         }
     },
 
