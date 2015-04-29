@@ -271,6 +271,25 @@ describe('ImmutableMixin component functions', function () {
             });
         });
 
+        it('should call getStateOnChange from onChange correctly', function (done) {
+            var Component = React.createClass({
+                mixins: [ImmutableMixin],
+                getStateOnChange: function (foo) {
+                    if (foo) {
+                        done();
+                    }
+                    return {};
+                },
+                render: function () {
+                    return null;
+                }
+            });
+
+            var component = jsx.renderComponent(Component, {});
+            var onChange = component.onChange;
+            onChange(true);
+        });
+
         it('should call getStateOnChange to initialize state', function (done) {
             var Component = React.createClass({
                 mixins: [ImmutableMixin],
