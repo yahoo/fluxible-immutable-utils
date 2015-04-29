@@ -83,7 +83,7 @@ var myObject = {
 ```
 
 #### Configuring the Mixin
-If you are using third party libraries/have a special case where you don't want the mixin to consider some of the keys of props/state, you have two options.  First, you can set the ignoreImmutableCheck object to skip the check for immutability for any keys you decide.  Similarly, setting keys in keysToIgnoreOnUpdate will ignore any keys when checking for props/state equality.  You must set these values inside a component's `statics` field (or in a config, see below), and they must be set seperately for props/state.  
+If you are using third party libraries/have a special case where you don't want the mixin to consider some of the keys of props/state, you have two options.  First, you can set the ignoreImmutableCheck object to skip the check for immutability for any keys you decide.  Second, if you want the mixin to also ignore a key when checking for data equality in props/state, you can set the key value to the flag `SKIP_SHOULD_UPDATE`.  You must set these values inside a component's `statics` field (or in a config, see below), and they must be set seperately for props/state.  
 
 **Example**
 
@@ -101,7 +101,7 @@ module.exports = React.createClass({
                 someKey: true // don't check someKey for immutablility in props
             },
             state: {
-                anotherKey: true // don't check anotherKey for immutablility in props
+                anotherKey: 'SKIP_SHOULD_UPDATE' // don't check anotherKey for immutablility in props, AND don't check its value is shouldComponentUpdate
             }
             
         },

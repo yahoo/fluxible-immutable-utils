@@ -37,13 +37,13 @@ describe('ImmutableMixin component functions', function () {
             expect(console.warn.callCount).to.equal(0);
         });
 
-        it('should ignore certain props/state fields if they are in keysToIgnoreOnUpdate', function () {
+        it('should ignore certain props/state fields if they are marked SKIP_SHOULD_UPDATE', function () {
             var Component = React.createClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
-                keysToIgnoreOnUpdate: {
+                ignoreImmutableCheck: {
                     props: {
-                        data: true
+                        data: 'SKIP_SHOULD_UPDATE'
                     }
                 },
                 render: function () {
@@ -55,17 +55,15 @@ describe('ImmutableMixin component functions', function () {
             };
             var component = jsx.renderComponent(Component, {data: {}});
             expect(component.shouldComponentUpdate(props, {})).to.equal(false);
-            expect(console.warn.callCount).to.equal(1);
+            expect(console.warn.callCount).to.equal(0);
         });
 
         it('should apply configs if we use createComponentMixn', function () {
             var config = {
-                keysToIgnoreOnUpdate: {
-                    props: {
-                        data: true
-                    }
-                },
                 ignoreImmutableCheck: {
+                    props: {
+                        data: 'SKIP_SHOULD_UPDATE'
+                    },
                     state: {
                         foo: true
                     }
@@ -87,7 +85,7 @@ describe('ImmutableMixin component functions', function () {
                 }
             });
             var props = {
-                data: true
+                data: {}
             };
             var component = jsx.renderComponent(Component, {data: false});
             expect(component.shouldComponentUpdate(props, state)).to.equal(false);
@@ -111,6 +109,26 @@ describe('ImmutableMixin component functions', function () {
                 done();
             });
         });
+
+        it('should never warn if ignoreAllWarnings is true', function (done) {
+            var Component = React.createClass({
+                displayName: 'MyComponent',
+                mixins: [ImmutableMixin],
+                statics: {
+                    ignoreAllWarnings: true
+                },
+                render: function () {
+                    return null;
+                }
+            });
+
+            var comp = jsx.renderComponent(Component, {});
+            comp.setState({testData: {list: [1, 2, 3]}}, function () {
+                expect(console.warn.callCount).to.equal(0);
+                done();
+            });
+        });
+
 
         it('should bypass certain state fields if are ignored', function (done) {
             var Component = React.createClass({
