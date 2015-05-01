@@ -59,12 +59,6 @@ var ImmutableMixin = require('fluxible-immutable-utils').ComponentMixin;
 module.exports = React.createClass({
     displayName: 'MyReactComponent',
     mixins: [ImmutableMixin],
-    statics: {
-        ignoreImmutableCheck:  {
-            someKey: true,
-            anotherKey: true
-        }
-    },
     getStateOnChange: function () {
         if (!this.state) {
             //initialize here if needed
@@ -87,6 +81,42 @@ var myObject = {
     aNonImmutableObject={myObject} // will cause a console.warn statement because we are passing a non-immutable object
 />
 ```
+
+#### Configuring the Mixin
+If you are using third party libraries/have a special case where you don't want the mixin to consider some of the keys of props/state, you have two options.  First, you can set the ignoreImmutableCheck object to skip the check for immutability for any keys you decide.  Second, if you want the mixin to also ignore a key when checking for data equality in props/state, you can set the key value to the flag `SKIP_SHOULD_UPDATE`.  You must set these values inside a component's `statics` field (or in a config, see below), and they must be set seperately for props/state.  You can also turn off all warnings by settings the ignoreAllWarnings flag.  
+
+**Example**
+
+```jsx
+// MyReactComponent.jsx
+
+var ImmutableMixin = require('fluxible-immutable-utils').ComponentMixin;
+
+module.exports = React.createClass({
+    displayName: 'MyReactComponent',
+    mixins: [ImmutableMixin],
+    statics: {
+        ignoreAllWarnings: (process.env.NODE_ENV !== 'dev') // turn off all warnings when not in dev mode
+        ignoreImmutableCheck:  {
+            props: {
+                someKey: true // don't check someKey for immutablility in props
+            },
+            state: {
+                anotherKey: 'SKIP_SHOULD_UPDATE' // don't check anotherKey for immutablility in props, AND don't check its value is shouldComponentUpdate
+            }
+            
+        }
+    },
+
+    ...rest of component follows...
+});
+```
+
+If you want to just pass around a common config, then use:  
+```jsx
+var ImmutableMixin = require('fluxible-immutable-utils').createComponentMixin(myConfig);
+```
+Where myConfig has the same structure as the statics above.
 
 ## `createImmutableStore`
 
