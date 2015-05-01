@@ -1,5 +1,5 @@
 module.exports = {
-    ComponentMixin: require('./src/createComponentMixin')(),
-    createComponentMixin: require('./src/createComponentMixin'),
+    ComponentMixin: require('./src/createImmutableMixin')(),
+    createImmutableMixin: require('./src/createImmutableMixin'),
     createImmutableStore: require('./src/createImmutableStore')
 };

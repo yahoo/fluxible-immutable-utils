@@ -7,7 +7,7 @@ var expect = require('chai').expect;
 var React = require('react');
 var sinon = require('sinon');
 var Immutable = require('immutable');
-var ImmutableMixin = require('../../src/createComponentMixin')();
+var ImmutableMixin = require('../../src/createImmutableMixin')();
 
 describe('ImmutableMixin component functions', function () {
     describe('#objectsToIgnore', function () {
@@ -19,7 +19,7 @@ describe('ImmutableMixin component functions', function () {
             console.warn.restore();
         });
 
-        it('should bypass certain props fields if are ignored', function () {
+        it('should bypass certain props fields if they are ignored', function () {
             var Component = React.createClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
@@ -34,6 +34,29 @@ describe('ImmutableMixin component functions', function () {
             });
 
             jsx.renderComponent(Component, {data: {list: [1, 2, 3]}});
+            expect(console.warn.callCount).to.equal(0);
+        });
+
+        it('should bypass fields in both props and state if they at the top level', function () {
+            var Component = React.createClass({
+                displayName: 'MyComponent',
+                mixins: [ImmutableMixin],
+                ignoreImmutableCheck: {
+                    data: true
+                },
+                getStateOnChange: function () {
+                    return {
+                        data: true
+                    };
+                },
+                render: function () {
+                    return null;
+                }
+            });
+
+            var component = jsx.renderComponent(Component, {data: {}});
+            expect(console.warn.callCount).to.equal(0);
+            expect(component.shouldComponentUpdate({}, {data: {}})).to.equal(true);
             expect(console.warn.callCount).to.equal(0);
         });
 
@@ -69,7 +92,7 @@ describe('ImmutableMixin component functions', function () {
                     }
                 }
             };
-            var CustomImmutableMixin = require('../../src/createComponentMixin')(config);
+            var CustomImmutableMixin = require('../../src/createImmutableMixin')(config);
             var state = {
                 foo: {},
                 baz: {}
@@ -92,12 +115,17 @@ describe('ImmutableMixin component functions', function () {
             expect(console.warn.callCount).to.equal(1);
         });
 
-        it('should warn certain if next state is mutable', function (done) {
+        it('should warn if next state is mutable', function (done) {
             var Component = React.createClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
                 render: function () {
                     return null;
+                },
+                getStateOnChange: function () {
+                    return {
+                        testData: Immutable.Map()
+                    };
                 }
             });
 
@@ -389,6 +417,11 @@ describe('ImmutableMixin component functions', function () {
 
         it('should return true if state is changed', function () {
             assertComponentUpdate(props, {list: props.list}, true);
+            assertComponentUpdate(props, {foo: 'bar', list: state.list}, true);
+        });
+
+        it('should return true if state is null', function () {
+            assertComponentUpdate(props, null, true);
             assertComponentUpdate(props, {foo: 'bar', list: state.list}, true);
         });
 

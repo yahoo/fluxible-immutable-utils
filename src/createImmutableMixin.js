@@ -80,6 +80,12 @@ function shallowEqualsImmutable(item1, item2, component, ignoreImmutableCheckKey
     var item2Keys = Object.keys(item2);
     var item1Prop;
     var item2Prop;
+
+    // Different key set length, no need to proceed..check it here because we still
+    // want to check all of item2's objects to see if any are non-immutable.
+    if (item1Keys.length !== item2Keys.length) {
+        return false;
+    }
     // check item2keys so that we can also check for any non-immutable objects
     for (i = 0; i < item2Keys.length; i++) {
         key = item2Keys[i];
@@ -94,12 +100,6 @@ function shallowEqualsImmutable(item1, item2, component, ignoreImmutableCheckKey
                 && (!item1.hasOwnProperty(key) || item1Prop !== item2Prop)) {
             return false;
         }
-    }
-
-    // Different key set length, no need to proceed..check it here because we still
-    // want to check all of item2's objects to see if any are non-immutable.
-    if (item1Keys.length !== item2Keys.length) {
-        return false;
     }
 
     return true;
@@ -123,6 +123,15 @@ function mergeDefaultValues(defaultObject, config, objectName, component) {
     // merge any custom configs over defaults
     objectToCreate.props = utils.merge(defaultObject.props, objectToCreate.props);
     objectToCreate.state = utils.merge(defaultObject.state, objectToCreate.state);
+
+    // assign any values that are for both props and state.
+    Object.keys(objectToCreate).forEach(function keyIterator(key) {
+        if (key !== 'props' && key !== 'state') {
+            var val = objectToCreate[key];
+            objectToCreate.props[key] = val;
+            objectToCreate.state[key] = val;
+        }
+    });
     return objectToCreate;
 }
 
@@ -200,7 +209,6 @@ module.exports = function (config) {
             // Set default methods if the there is no override
             this.onChange = this.onChange || defaults.onChange.bind(this);
             this.shouldComponentUpdate = this.shouldComponentUpdate || defaults.shouldComponentUpdate.bind(this);
-
             // Checks the props and state to raise warnings
             checkObjectProperties(this.props, this, this.ignoreImmutableCheck.props);
             checkObjectProperties(this.state, this, this.ignoreImmutableCheck.state);
