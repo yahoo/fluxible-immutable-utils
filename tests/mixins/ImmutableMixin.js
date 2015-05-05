@@ -7,9 +7,9 @@ var expect = require('chai').expect;
 var React = require('react');
 var sinon = require('sinon');
 var Immutable = require('immutable');
-var ImmutableMixin = require('../../src/createImmutableMixin')();
+var ImmutableMixin = require('../../mixins/ImmutableMixin');
 
-describe('ImmutableMixin component functions', function () {
+describe('ImmutableMixin', function () {
     describe('#objectsToIgnore', function () {
         beforeEach(function () {
             sinon.spy(console, 'warn');
@@ -23,6 +23,7 @@ describe('ImmutableMixin component functions', function () {
             var Component = React.createClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
+                // TODO: simplify ignoreImmutableCheck
                 ignoreImmutableCheck: {
                     props: {
                         data: true
@@ -79,40 +80,6 @@ describe('ImmutableMixin component functions', function () {
             var component = jsx.renderComponent(Component, {data: {}});
             expect(component.shouldComponentUpdate(props, {})).to.equal(false);
             expect(console.warn.callCount).to.equal(0);
-        });
-
-        it('should apply configs if we use createComponentMixn', function () {
-            var config = {
-                ignoreImmutableCheck: {
-                    props: {
-                        data: 'SKIP_SHOULD_UPDATE'
-                    },
-                    state: {
-                        foo: true
-                    }
-                }
-            };
-            var CustomImmutableMixin = require('../../src/createImmutableMixin')(config);
-            var state = {
-                foo: {},
-                baz: {}
-            };
-            var Component = React.createClass({
-                displayName: 'MyComponent',
-                mixins: [CustomImmutableMixin],
-                render: function () {
-                    return null;
-                },
-                getStateOnChange: function () {
-                    return state;
-                }
-            });
-            var props = {
-                data: {}
-            };
-            var component = jsx.renderComponent(Component, {data: false});
-            expect(component.shouldComponentUpdate(props, state)).to.equal(false);
-            expect(console.warn.callCount).to.equal(1);
         });
 
         it('should warn if next state is mutable', function (done) {

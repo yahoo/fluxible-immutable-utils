@@ -10,8 +10,8 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "cover": "istanbul cover --dir artifacts -- _mocha tests/unit/ --recursive --reporter spec",
-    "devtest": "mocha tests/unit/ --recursive --reporter spec",
+    "cover": "istanbul cover --dir artifacts -- _mocha tests --recursive --reporter spec",
+    "devtest": "mocha tests --recursive --reporter spec",
     "test": "npm run lint && npm run cover"
   },
   "dependencies": {
