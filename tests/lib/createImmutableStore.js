@@ -7,7 +7,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var createImmutableStore = require('../../src/createImmutableStore');
+var createImmutableStore = require('../../lib/createImmutableStore');
 
 describe('createImmutableStore', function () {
     var Store = createImmutableStore({
