@@ -1,5 +1,3 @@
-module.exports = {
-    ComponentMixin: require('./mixins/ImmutableMixin'),
-    createImmutableMixin: require('./lib/createImmutableMixin'),
-    createImmutableStore: require('./lib/createImmutableStore')
-};
+exports.ComponentMixin = exports.ImmutableMixin = require('./mixins/ImmutableMixin');
+exports.createImmutableMixin = require('./lib/createImmutableMixin');
+exports.createImmutableStore = require('./lib/createImmutableStore');
