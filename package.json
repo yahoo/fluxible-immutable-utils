@@ -6,7 +6,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:yahoo/fluxible-immutable-utils.git#master"
+    "url": "https://github.com/yahoo/fluxible-immutable-utils.git"
   },
   "scripts": {
     "lint": "eslint .",
