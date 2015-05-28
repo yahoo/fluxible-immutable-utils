@@ -125,14 +125,24 @@ describe('createImmutableMixin', function () {
             })).to.equal(false);
         });
 
-        it('should return true if props change', function () {
+        it('should return true if any prop changes', function () {
             expect(this.component.shouldComponentUpdate({
                 name: 'Frodo',
                 map: someMap
             })).to.equal(true);
+        });
 
+        it('should return true if any prop is removed', function () {
             expect(this.component.shouldComponentUpdate({
                 name: 'Bilbo'
+            })).to.equal(true);
+        });
+
+        it('should return true if a new prop is passed', function () {
+            expect(this.component.shouldComponentUpdate({
+                name: 'Bilbo',
+                map: someMap,
+                n: 1
             })).to.equal(true);
         });
     });
