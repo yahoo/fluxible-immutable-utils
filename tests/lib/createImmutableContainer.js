@@ -1,4 +1,4 @@
-/*globals describe, xdescribe, it, beforeEach, afterEach */
+/*globals describe, it, beforeEach, afterEach */
 
 'use strict';
 
@@ -91,81 +91,33 @@ describe('createImmutableMixin', function () {
         });
     });
 
-    xdescribe('#shouldComponentUpdate', function () {
-//        var component;
-//        var props;
-//        var state;
-//
-//        beforeEach(function () {
-//            props = {foo: 'bar', list: Immutable.fromJS(['baz', 'foo'])};
-//            state = {list: Immutable.fromJS(['baz', 'foo'])};
-//
-//            var Component = React.createClass({
-//                mixins: [ImmutableMixin],
-//                getStateOnChange: function () {
-//                    return state;
-//                },
-//                render: function () {
-//                    return null;
-//                }
-//            });
-//
-//            component = jsx.renderComponent(Component, props);
-//        });
-//
-//        function assertComponentUpdate(newProps, newState, expected) {
-//            expect(
-//                component.shouldComponentUpdate(newProps, newState)
-//            ).to.equal(expected);
-//        }
-//
-//        it('should return false if props/state are equal', function () {
-//            assertComponentUpdate(props, state, false);
-//            assertComponentUpdate({foo: 'bar', list: props.list}, state, false);
-//            assertComponentUpdate(props, {list: state.list}, false);
-//        });
-//
-//        it('should return true if a current prop value is changed', function () {
-//            assertComponentUpdate({foo: 'fubar', list: props.list}, state, true);
-//            assertComponentUpdate({foo: 'bar', list: state.list}, state, true);
-//            assertComponentUpdate({}, state, true);
-//        });
-//
-//        it('should return true if a new prop value is added', function () {
-//            assertComponentUpdate(props, state, false);
-//            props.test = 'baz';
-//            assertComponentUpdate(props, state, true);
-//        });
-//
-//        it('should return true if a new prop value is removed', function () {
-//            assertComponentUpdate(props, state, false);
-//            delete props.foo;
-//            assertComponentUpdate(props, state, true);
-//        });
-//
-//        it('should return true if state is changed', function () {
-//            assertComponentUpdate(props, {list: props.list}, true);
-//            assertComponentUpdate(props, {foo: 'bar', list: state.list}, true);
-//        });
-//
-//        it('should return true if state is null', function () {
-//            assertComponentUpdate(props, null, true);
-//            assertComponentUpdate(props, {foo: 'bar', list: state.list}, true);
-//        });
-//
-//        it('allows the shouldComponentUpdate to be overridden', function () {
-//            var Component = React.createClass({
-//                mixins: [ImmutableMixin],
-//                shouldComponentUpdate: function () {
-//                    return 'override';
-//                },
-//                render: function () {
-//                    return null;
-//                }
-//            });
-//
-//            component = jsx.renderComponent(Component, props);
-//            assertComponentUpdate({}, {}, 'override');
-//        });
+    describe('#shouldComponentUpdate', function () {
+        var someMap = Immutable.Map();
+        var Component = createImmutableContainer(DummyComponent);
+
+        beforeEach(function () {
+            this.component = jsx.renderComponent(Component, {
+                name: 'Bilbo',
+                map: someMap
+            });
+        });
+
+        it('should return false if props are equal', function () {
+            expect(this.component.shouldComponentUpdate({
+                name: 'Bilbo',
+                map: someMap
+            })).to.equal(false);
+        });
+
+        it('should return true if props change', function () {
+            expect(this.component.shouldComponentUpdate({
+                name: 'Frodo',
+                map: someMap
+            })).to.equal(true);
+
+            expect(this.component.shouldComponentUpdate({
+                name: 'Bilbo'
+            })).to.equal(true);
+        });
     });
 });
