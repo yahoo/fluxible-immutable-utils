@@ -91,6 +91,22 @@ describe('createImmutableMixin', function () {
         });
     });
 
+    describe('#componentWillUpdate', function () {
+        var Component = createImmutableContainer(DummyComponent);
+        var component = jsx.renderComponent(Component, {
+            items: [1, 2, 3],
+            stuff: {},
+            map: Immutable.Map(),
+            number: 1,
+            name: 'something'
+        });
+
+        it('raises a warning for each non-imutable object', function () {
+            component.componentWillUpdate();
+            expect(console.warn.callCount).to.equal(2);
+        });
+    });
+
     describe('#shouldComponentUpdate', function () {
         var someMap = Immutable.Map();
         var Component = createImmutableContainer(DummyComponent);
