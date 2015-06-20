@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint .",
     "cover": "istanbul cover --dir artifacts -- _mocha tests --recursive --reporter spec",
-    "devtest": "mocha tests --recursive --reporter spec",
+    "devtest": "mocha tests --recursive --reporter spec --compilers js:babel/register",
     "test": "npm run lint && npm run cover"
   },
   "peerDependencies": {
@@ -24,6 +24,7 @@
     "fluxible-addons-react": "^0.2.0"
   },
   "devDependencies": {
+    "babel": "^5.5.8",
     "chai": "^3.0.0",
     "coveralls": "^2.11.1",
     "eslint": "^0.17.0",
