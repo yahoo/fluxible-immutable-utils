@@ -12,13 +12,45 @@ This package provides easy to use mixins/utils for both fluxible stores and reac
 $ npm install --save fluxible-immutable-utils
 ```
 
+## `createImmutableContainer`
+
+This method creates an immutable higher order component.
+
+```js
+
+var MyComponent = React.createClass({
+    displayName: 'MyComponent',
+
+    ...
+});
+
+var createImmutableContainer = require('fluxible-immutable-utils').createImmutableContainer;
+
+// Wraps your component in an immutable container.
+// Prevents renders when props are the same
+module.exports = createImmutableContainer(MyComponent);
+
+// Wraps your component in an immutable container that listens to stores
+// and pass its state down as props
+module.exports = createImmutableContainer(MyComponent, {
+    stores: [SomeStore],
+    getStateFromStores: {
+        SomeStore: function (store) {
+            return {
+                someState: store.state;
+            }
+        }
+    }
+});
+```
+
 ## `ComponentMixin`
 A mixin that provides convenience methods for using Immutable.js inside of react components.  Note that this mixin uses the initializeComponent method for setup, and any components that use this mixin should define a 'getStateOnChange' function for generating component state (see below).
 
 This mixin has several purposes:
 -  Checks that the objects in state/props of each component are an Immutable Map.
 -  Implements a default shouldComponentUpdate method.
--  Provides a convenience method for dealing with state changes/component 
+-  Provides a convenience method for dealing with state changes/component
 initialization.
 
 ### Immutalizing State
@@ -76,14 +108,14 @@ module.exports = React.createClass({
 var myObject = {
     foo: 'bar'
 };
-<MyReactComponent 
+<MyReactComponent
     someKey={myObject} // fine, because we set this key to be ignored
     aNonImmutableObject={myObject} // will cause a console.warn statement because we are passing a non-immutable object
 />
 ```
 
 #### Configuring the Mixin
-If you are using third party libraries/have a special case where you don't want the mixin to consider some of the keys of props/state, you have two options.  First, you can set the ignoreImmutableCheck object to skip the check for immutability for any keys you decide.  Second, if you want the mixin to also ignore a key when checking for data equality in props/state, you can set the key value to the flag `SKIP_SHOULD_UPDATE`.  You must set these values inside a component's `statics` field (or in a config, see below), and they must be set seperately for props/state.  You can also turn off all warnings by settings the ignoreAllWarnings flag.  
+If you are using third party libraries/have a special case where you don't want the mixin to consider some of the keys of props/state, you have two options.  First, you can set the ignoreImmutableCheck object to skip the check for immutability for any keys you decide.  Second, if you want the mixin to also ignore a key when checking for data equality in props/state, you can set the key value to the flag `SKIP_SHOULD_UPDATE`.  You must set these values inside a component's `statics` field (or in a config, see below), and they must be set seperately for props/state.  You can also turn off all warnings by settings the ignoreAllWarnings flag.
 
 **Example**
 
@@ -104,7 +136,7 @@ module.exports = React.createClass({
             state: {
                 anotherKey: 'SKIP_SHOULD_UPDATE' // don't check anotherKey for immutablility in props, AND don't check its value is shouldComponentUpdate
             }
-            
+
         }
     },
 
@@ -112,7 +144,7 @@ module.exports = React.createClass({
 });
 ```
 
-If you want to just pass around a common config, then use:  
+If you want to just pass around a common config, then use:
 ```jsx
 var ImmutableMixin = require('fluxible-immutable-utils').createComponentMixin(myConfig);
 ```
@@ -122,19 +154,19 @@ Where myConfig has the same structure as the statics above.
 
 A helper method similar to `React.createClass` but for creating immutable [stores](https://facebook.github.io/flux/docs/overview.html#stores). Internally it wraps a call to [`'fluxible/utils/createStore`](https://github.com/yahoo/fluxible/blob/v0.2.9/utils/createStore.js).
 
-The main use case for this method is to reduce boilerplate when implementing immutable [`fluxible`](fluxible.io) stores. 
+The main use case for this method is to reduce boilerplate when implementing immutable [`fluxible`](fluxible.io) stores.
 
 The helper adds a new property and method to the created store
 * `_state` {[Map](http://facebook.github.io/immutable-js/docs/#/Map)} - The root `Immutable` where all data in the store will be saved.
 
-* `setState(newState, [event], [payload])` {Function} - This method replaces `this._state` with `newState` (unless they were the same) and then calls `this.emit(event, payload)`. 
+* `setState(newState, [event], [payload])` {Function} - This method replaces `this._state` with `newState` (unless they were the same) and then calls `this.emit(event, payload)`.
     * If `event` is *falsy* it will call `this.emitChange(payload)`
     * The method also ensures that `_state` remains immutable by auto-converting `newState` to an immutable object.
 
 and creates defaults for the following [fluxible store](http://fluxible.io/api/stores.html) methods
 * [`initialize()`](http://fluxible.io/api/stores.html#constructor) - The default implementations creates a `_state` property on the store and initializes it to [`Immutable.Map`](http://facebook.github.io/immutable-js/docs/#/Map)
 
-* [`rehydrate(state)`](http://fluxible.io/api/stores.html#rehydrate-state-) - The default implementation hydrates `_state` 
+* [`rehydrate(state)`](http://fluxible.io/api/stores.html#rehydrate-state-) - The default implementation hydrates `_state`
 
 * [`dehydrate()`](http://fluxible.io/api/stores.html#dehydrate-) - The default implementation simply returns `_state` which is `Immutable` (due to all `Immutable` objects implementing a [`toJSON`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#toJSON_behavior) function, `_state` can be directly passed to `JSON.stringify`)
 
