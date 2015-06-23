@@ -14,22 +14,22 @@
     "devtest": "mocha tests --recursive --reporter spec",
     "test": "npm run lint && npm run cover"
   },
+  "peerDependencies": {
+      "react": "^0.13"
+  },
   "dependencies": {
     "immutable": "^3.3.0",
     "fluxible": "^0.4.0"
-  },
-  "peerDependencies": {
-    "react": "<=0.13.x"
   },
   "devDependencies": {
     "chai": "^2.0.0",
     "coveralls": "^2.11.1",
     "eslint": "^0.17.0",
     "istanbul": "^0.3.2",
-    "jsx-test": "^0.4.2",
+    "jsx-test": "^0.6",
     "mocha": "^2.0",
     "pre-commit": "^1.0",
-    "react": "<=0.13.x",
+    "react": "^0.13",
     "sinon": "^1.14.1"
   },
   "pre-commit": [
