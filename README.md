@@ -216,3 +216,72 @@ module.exports = createImmutableStore({
     }
 });
 ```
+
+## `ImmutableStore`
+
+A class to inherit similar to the fluxible addon `BaseStore`. Internally it inherits [`'fluxible/addons/BaseStore`](https://github.com/yahoo/fluxible/blob/master/docs/api/addons/BaseStore.md).
+
+The main use case for this method is to reduce boilerplate when implementing immutable [`fluxible`](fluxible.io) stores.
+
+The helper adds a new property and method to the created store
+* `_state` {[Map](http://facebook.github.io/immutable-js/docs/#/Map)} - The root `Immutable` where all data in the store will be saved.
+
+* `setState(newState, [event], [payload])` {Function} - This method replaces `this._state` with `newState` (unless they were the same) and then calls `this.emit(event, payload)`.
+    * If `event` is *falsy* it will call `this.emitChange(payload)`
+    * The method also ensures that `_state` remains immutable by auto-converting `newState` to an immutable object.
+
+* `mergeState(newState, [event], [payload])` {Function} - This method replaces `this._state` with `newState` (unless they were the same) and then calls `this.emit(event, payload)`.
+    * If `event` is *falsy* it will call `this.emitChange(payload)`
+    * The method also ensures that `_state` remains immutable by auto-converting `newState` to an immutable object.
+
+* `getState(newState, [event], [payload])` {Function} - This method replaces `this._state` with `newState` (unless they were the same) and then calls `this.emit(event, payload)`.
+    * If `event` is *falsy* it will call `this.emitChange(payload)`
+    * The method also ensures that `_state` remains immutable by auto-converting `newState` to an immutable object.
+
+and creates defaults for the following [fluxible store](http://fluxible.io/api/stores.html) methods
+* [`initialize()`](http://fluxible.io/api/stores.html#constructor) - The default implementations creates a `_state` property on the store and initializes it to [`Immutable.Map`](http://facebook.github.io/immutable-js/docs/#/Map)
+
+* [`rehydrate(state)`](http://fluxible.io/api/stores.html#rehydrate-state-) - The default implementation hydrates `_state`
+
+* [`dehydrate()`](http://fluxible.io/api/stores.html#dehydrate-) - The default implementation simply returns `_state` which is `Immutable` (due to all `Immutable` objects implementing a [`toJSON`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#toJSON_behavior) function, `_state` can be directly passed to `JSON.stringify`)
+
+**Note** that all defaults can still be overwritten when creating the store.
+
+**Note 2** Avoid returning a `_state.toJS()` from a store when using it with the createImmutableContainer since an ImmutableContainer expects and uses the Immutable data to do comparisons when deciding to re-render.
+
+### Example Usage
+
+```js
+// FooStore.js
+
+import {ImmutableStore} from 'fluxible-immutable-utils';
+
+class FooStore extends ImmutableStore {
+    // public accessors
+    getBar: function (id) {
+        return this._state.get('bar');
+    },
+
+    getError: function () {
+      
+    // private mutators, these should only be called via dispatch
+    _onNewFoo(data) {
+        // data = { foo: 'Hello', bar: 'World' }            
+        this.setState(data);        
+    }
+
+    _onNewBar(bar) {
+        // This will just update bar and leave foo with the same state
+        this.mergeState({ bar: bar });
+    }
+}
+
+ContentStore.storeName = 'ContentStore';
+
+ContentStore.handlers = {
+    NEW_FOO: '_onNewFooBar',
+    NEW_FOOS: '_onNewBar'  
+};
+
+export default ContentStore;
+```

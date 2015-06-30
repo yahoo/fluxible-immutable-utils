@@ -7,7 +7,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var ImmutableStore = require('../../lib/ImmutableStore');
+var ImmutableStore = require('../../dist/ImmutableStore');
 
 describe('ImmutableStore', function () {
     beforeEach(function () {
@@ -168,14 +168,14 @@ describe('ImmutableStore', function () {
 
     describe('#getState', function () {
         it('gets the initial state', function () {
-            expect(this.store.getState()).to.deep.equal({});
+            expect(this.store.getState().toJS()).to.deep.equal({});
         });
 
         it('gets the rehydrated state', function () {
             var state = {list: [1, 2, 3], error: null};
             this.store.rehydrate(state);
 
-            expect(this.store.getState()).to.deep.equal(state);
+            expect(this.store.getState().toJS()).to.deep.equal(state);
         });
     });
 });
