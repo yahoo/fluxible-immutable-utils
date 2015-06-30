@@ -205,12 +205,12 @@ class FooStore extends ImmutableStore {
     }
 }
 
-ContentStore.storeName = 'ContentStore';
+FooStore.storeName = 'FooStore';
 
-ContentStore.handlers = {
+FooStore.handlers = {
     NEW_FOO: '_onNewFooBar',
     NEW_FOOS: '_onNewBar'  
 };
 
-export default ContentStore;
+export default FooStore;
 ```
