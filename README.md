@@ -234,7 +234,7 @@ The helper adds a new property and some helper methods to the created store
     * If `event` is *falsy* it will call `this.emitChange(payload)`
     * The method also ensures that `_state` remains immutable by auto-converting `newState` to an immutable object.
 
-* `getState()` {Function} - This method returns the `this_state`.
+* `getState()` {Function} - This method returns the `this._state`.
 
 and creates defaults for the following [fluxible store](http://fluxible.io/api/stores.html) methods
 * [`constructor()`](http://fluxible.io/api/stores.html#constructor) - The default implementations creates a `_state` property on the store and initializes it to [`Immutable.Map`](http://facebook.github.io/immutable-js/docs/#/Map)
