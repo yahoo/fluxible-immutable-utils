@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "immutable": "^3.3.0",
-    "fluxible": "^0.5.0",
-    "fluxible-addons-react": "^0.1.0"
+    "fluxible": "^1.0.0",
+    "fluxible-addons-react": "^0.2.0"
   },
   "devDependencies": {
     "chai": "^2.0.0",
