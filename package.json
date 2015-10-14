@@ -15,7 +15,7 @@
     "test": "npm run lint && npm run cover"
   },
   "peerDependencies": {
-    "react": "^0.13"
+    "react": "~0.13.0"
   },
   "dependencies": {
     "immutable": "^3.3.0",
