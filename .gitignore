@@ -4,6 +4,5 @@ coverage/
 node_modules/
 protractor-batch-artifacts/
 results/
-dist/
 tmp/
 npm-*.log
