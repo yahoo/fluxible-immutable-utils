@@ -7,7 +7,7 @@
 
 var Immutable = require('immutable');
 var isImmutable = Immutable.Iterable.isIterable;
-var isReactElement = require('react/addons').isValidElement;
+var isReactElement = require('react').isValidElement;
 
 function isNonImmutable(item) {
     return (

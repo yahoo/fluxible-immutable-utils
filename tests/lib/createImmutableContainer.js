@@ -1,7 +1,7 @@
 /*globals describe, it, beforeEach, afterEach */
 
 'use strict';
-
+Object.assign = require('object-assign');
 var jsx = require('jsx-test');
 var expect = require('chai').expect;
 var Immutable = require('immutable');
@@ -10,7 +10,7 @@ var sinon = require('sinon');
 var createImmutableContainer = require('../../lib/createImmutableContainer');
 var createStore = require('fluxible/addons/createStore');
 
-describe('createImmutableMixin', function () {
+describe('createImmutableContainer', function () {
     var DummyComponent = React.createClass({
         displayName: 'Dummy',
 
@@ -49,8 +49,11 @@ describe('createImmutableMixin', function () {
     });
 
     describe('#componentWillMount', function () {
-        var Component = createImmutableContainer(DummyComponent, {
-            ignore: ['data-items']
+        var Component;
+        beforeEach(function () {
+            Component = createImmutableContainer(DummyComponent, {
+                ignore: ['data-items']
+            });
         });
 
         it('raise warnings if non immutable props are passed', function () {
@@ -66,7 +69,7 @@ describe('createImmutableMixin', function () {
             expect(console.warn.callCount).to.equal(0);
         });
 
-        it('raises a warning for each non-imutable object', function () {
+        it('raises a warning for each non-immutable object', function () {
             jsx.renderComponent(Component, {
                 items: [1, 2, 3],
                 stuff: {},
