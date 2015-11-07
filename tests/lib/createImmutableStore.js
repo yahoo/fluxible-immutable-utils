@@ -47,6 +47,30 @@ describe('createImmutableStore', function () {
         });
     });
 
+    describe('#get', function () {
+        beforeEach(function () {
+            this.store.rehydrate({
+                weapons: ['sword', 'bow', 'shotgun'],
+                spells: {
+                    'Fire Ball': 3,
+                    'Arcane Intelect': 1
+                }
+            });
+        });
+
+        it('gets a part of the state', function () {
+            expect(this.store.get('weapons').toJS()).to.deep.equal([
+                'sword', 'bow', 'shotgun'
+            ]);
+        });
+
+        it('gets a nested part of the state', function () {
+            expect(this.store.get(['weapons', 1])).to.equal('bow');
+            expect(this.store.get(['spells', 'Fire Ball'])).to.equal(3);
+            expect(this.store.get(['spells', 'Arcane Intelect'])).to.equal(1);
+        });
+    });
+
     describe('#setState', function () {
         it('updates the state and emits a "change" event', function (done) {
             this.store.on('change', function () {
