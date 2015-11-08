@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint .",
     "cover": "istanbul cover --dir artifacts -- _mocha tests --recursive --reporter spec",
-    "devtest": "mocha tests --recursive --reporter spec --compilers js:babel/register",
+    "devtest": "mocha tests --recursive --reporter spec",
     "test": "npm run lint && npm run cover"
   },
   "peerDependencies": {

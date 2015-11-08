@@ -169,6 +169,8 @@ The helper adds a new property and some helper methods to the created store
 
 * `getState()` {Function} - This method returns the `this._state`.
 
+* `get(key)` {Function} - Get a value by key from the store.
+
 and creates defaults for the following [fluxible store](http://fluxible.io/api/stores.html) methods
 * [`constructor()`](http://fluxible.io/api/stores.html#constructor) - The default implementations creates a `_state` property on the store and initializes it to [`Immutable.Map`](http://facebook.github.io/immutable-js/docs/#/Map)
 

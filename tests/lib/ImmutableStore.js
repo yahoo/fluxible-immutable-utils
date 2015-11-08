@@ -31,7 +31,7 @@ describe('ImmutableStore', function () {
 
 
     var methods = ['dehydrate', 'getState'];
-    methods.forEach(function(methodName) {
+    methods.forEach(function (methodName) {
         describe('#' + methodName, function () {
             it('gets the initial state', function () {
                 expect(this.store[methodName]()).to.deep.equal(this.store._state);
