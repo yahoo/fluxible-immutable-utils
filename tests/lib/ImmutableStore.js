@@ -7,7 +7,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var ImmutableStore = require('../../dist/ImmutableStore');
+var ImmutableStore = require('../../lib/ImmutableStore');
 
 describe('ImmutableStore', function () {
     beforeEach(function () {
@@ -29,17 +29,45 @@ describe('ImmutableStore', function () {
         });
     });
 
-    describe('#dehydrate', function () {
-        it('gets the initial state', function () {
-            expect(this.store.dehydrate()).to.deep.equal(this.store._state);
-            expect(this.store.dehydrate().toJS()).to.deep.equal({});
+
+    var methods = ['dehydrate', 'getState'];
+    methods.forEach(function(methodName) {
+        describe('#' + methodName, function () {
+            it('gets the initial state', function () {
+                expect(this.store[methodName]()).to.deep.equal(this.store._state);
+                expect(this.store[methodName]().toJS()).to.deep.equal({});
+            });
+
+            it('gets the rehydrated state', function () {
+                var state = {list: [1, 2, 3], error: null};
+                this.store.rehydrate(state);
+
+                expect(this.store[methodName]()).to.deep.equal(this.store._state);
+            });
+        });
+    });
+
+    describe('#get', function () {
+        beforeEach(function () {
+            this.store.rehydrate({
+                weapons: ['sword', 'bow', 'shotgun'],
+                spells: {
+                    'Fire Ball': 3,
+                    'Arcane Intelect': 1
+                }
+            });
         });
 
-        it('gets the rehydrated state', function () {
-            var state = {list: [1, 2, 3], error: null};
-            this.store.rehydrate(state);
+        it('gets a part of the state', function () {
+            expect(this.store.get('weapons').toJS()).to.deep.equal([
+                'sword', 'bow', 'shotgun'
+            ]);
+        });
 
-            expect(this.store.dehydrate()).to.deep.equal(this.store._state);
+        it('gets a nested part of the state', function () {
+            expect(this.store.get(['weapons', 1])).to.equal('bow');
+            expect(this.store.get(['spells', 'Fire Ball'])).to.equal(3);
+            expect(this.store.get(['spells', 'Arcane Intelect'])).to.equal(1);
         });
     });
 
@@ -163,19 +191,6 @@ describe('ImmutableStore', function () {
             });
             expect(count).to.equal(1);
             done();
-        });
-    });
-
-    describe('#getState', function () {
-        it('gets the initial state', function () {
-            expect(this.store.getState().toJS()).to.deep.equal({});
-        });
-
-        it('gets the rehydrated state', function () {
-            var state = {list: [1, 2, 3], error: null};
-            this.store.rehydrate(state);
-
-            expect(this.store.getState().toJS()).to.deep.equal(state);
         });
     });
 });

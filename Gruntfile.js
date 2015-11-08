@@ -1,4 +1,6 @@
-module.exports = function(grunt) {
+'use strict';
+
+module.exports = function (grunt) {
     grunt.initConfig({
         babel: {
             options: {
@@ -6,29 +8,19 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
-                    'dist/ImmutableStore.js': 'lib/ImmutableStore.js'
+                    'lib/ImmutableStore.js': 'src/ImmutableStore.js'
                 }
             }
         },
         clean: {
-            build: ['dist/*.js', 'dist/*.js.map']
-        },  
-        mochaTest: {
-            test: {        
-                options: {
-                  reporter: 'spec',
-                  recursive: true
-                },                
-                src: ['tests/**/*.js']
-            }
-        }  
+            build: ['lib/ImmutableStore.js', 'lib/ImmutableStore.js.map']
+        }
     });
 
     // libs
     grunt.loadNpmTasks('grunt-babel');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-mocha-test');
 
     // tasks
-    grunt.registerTask('default', ['clean:build', 'babel', 'mochaTest']);
+    grunt.registerTask('default', ['clean:build', 'babel']);
 };
