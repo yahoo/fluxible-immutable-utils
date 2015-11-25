@@ -1,3 +1,4 @@
 example.js
 build/**
 artifacts/**
+lib/ImmutableStore.js

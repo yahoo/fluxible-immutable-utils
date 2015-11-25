@@ -2,7 +2,7 @@
   "name": "fluxible-immutable-utils",
   "author": "dhood@yahoo-inc.com",
   "description": "A collection of utilities that provide convenience methods for using Immutable.js with a fluxible based application",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -24,9 +24,13 @@
     "fluxible-addons-react": "^0.2.0"
   },
   "devDependencies": {
+    "babel": "^5.5.8",
     "chai": "^3.0.0",
     "coveralls": "^2.11.1",
     "eslint": "^0.17.0",
+    "grunt": "^0.4.5",
+    "grunt-babel": "^5.0.1",
+    "grunt-contrib-clean": "^0.6.0",
     "istanbul": "^0.4.0",
     "jsx-test": "^0.8.0",
     "mocha": "^2.0",

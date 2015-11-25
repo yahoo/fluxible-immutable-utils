@@ -150,21 +150,29 @@ var ImmutableMixin = require('fluxible-immutable-utils').createComponentMixin(my
 ```
 Where myConfig has the same structure as the statics above.
 
-## `createImmutableStore`
+## `ImmutableStore`
 
-A helper method similar to `React.createClass` but for creating immutable [stores](https://facebook.github.io/flux/docs/overview.html#stores). Internally it wraps a call to [`'fluxible/utils/createStore`](https://github.com/yahoo/fluxible/blob/v0.2.9/utils/createStore.js).
+A class to inherit similar to the fluxible addon `BaseStore`. Internally it inherits [`'fluxible/addons/BaseStore`](https://github.com/yahoo/fluxible/blob/master/docs/api/addons/BaseStore.md).
 
 The main use case for this method is to reduce boilerplate when implementing immutable [`fluxible`](fluxible.io) stores.
 
-The helper adds a new property and method to the created store
+The helper adds a new property and some helper methods to the created store
 * `_state` {[Map](http://facebook.github.io/immutable-js/docs/#/Map)} - The root `Immutable` where all data in the store will be saved.
 
 * `setState(newState, [event], [payload])` {Function} - This method replaces `this._state` with `newState` (unless they were the same) and then calls `this.emit(event, payload)`.
     * If `event` is *falsy* it will call `this.emitChange(payload)`
     * The method also ensures that `_state` remains immutable by auto-converting `newState` to an immutable object.
 
+* `mergeState(newState, [event], [payload])` {Function} - This method does a shallow merge with `this._state` and then calls `this.emit(event, payload)`.
+    * If `event` is *falsy* it will call `this.emitChange(payload)`
+    * The method also ensures that `_state` remains immutable by auto-converting `newState` to an immutable object.
+
+* `getState()` {Function} - This method returns the `this._state`.
+
+* `get(key)` {Function} - Get a value by key from the store.
+
 and creates defaults for the following [fluxible store](http://fluxible.io/api/stores.html) methods
-* [`initialize()`](http://fluxible.io/api/stores.html#constructor) - The default implementations creates a `_state` property on the store and initializes it to [`Immutable.Map`](http://facebook.github.io/immutable-js/docs/#/Map)
+* [`constructor()`](http://fluxible.io/api/stores.html#constructor) - The default implementations creates a `_state` property on the store and initializes it to [`Immutable.Map`](http://facebook.github.io/immutable-js/docs/#/Map)
 
 * [`rehydrate(state)`](http://fluxible.io/api/stores.html#rehydrate-state-) - The default implementation hydrates `_state`
 
@@ -172,47 +180,39 @@ and creates defaults for the following [fluxible store](http://fluxible.io/api/s
 
 **Note** that all defaults can still be overwritten when creating the store.
 
+**Note 2** Avoid returning a `_state.toJS()` from a store when using it with the createImmutableContainer since an ImmutableContainer expects and uses the Immutable data to do comparisons when deciding to re-render.
+
 ### Example Usage
 
 ```js
 // FooStore.js
 
-'use strict';
+import {ImmutableStore} from 'fluxible-immutable-utils';
 
-var createImmutableStore = require('fluxible-immutable-utils').createImmutableStore;
-
-module.exports = createImmutableStore({
-    storeName: 'FooStore',
-    handlers: {
-        NEW_FOO: '_onNewFoo',
-        NEW_FOOS: '_onNewFoos',
-        FOO_ERROR: '_onFooError'
-    },
-
+class FooStore extends ImmutableStore {
     // public accessors
-    getFoo: function (id) {
-        return this._state.getIn(['data', id]);
-    },
-
-    getFoos: function () {
-        return this._state.get('data');
-    },
-
-    getError: function () {
-        return this._state.get('error');
+    getBar: function (id) {
+        return this._state.get('bar');
     }
 
     // private mutators, these should only be called via dispatch
-    _onNewFoo: function (payload) {
-        this.setState(this._state.setIn(['data', payload.id], payload.foo));
-    },
-
-    _onNewFoos: function (foos) {
-        this.setState(this._state.mergeIn(['data'], foos));
-    },
-
-    _onFooError: function (error) {
-        this.setState(this._state.set('error', error));
+    _onNewFoo(data) {
+        // data = { foo: 'Hello', bar: 'World' }            
+        this.setState(data);        
     }
-});
+
+    _onNewBar(bar) {
+        // This will just update bar and leave foo with the same state
+        this.mergeState({ bar: bar });
+    }
+}
+
+FooStore.storeName = 'FooStore';
+
+FooStore.handlers = {
+    NEW_FOO: '_onNewFooBar',
+    NEW_FOOS: '_onNewBar'  
+};
+
+export default FooStore;
 ```
