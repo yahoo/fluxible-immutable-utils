@@ -41,11 +41,11 @@ describe('createImmutableContainer', function () {
         var Component = createImmutableContainer(DummyComponent, {
             stores: [DummyStore],
             getStateFromStores: {
-                DummyStore: function (store) { }
+                DummyStore: function () { }
             }
         });
 
-        expect(Component.displayName).to.equal('Dummy:ImmutableStoreConnector');
+        expect(Component.displayName).to.equal('storeConnector(Dummy:Immutable)');
     });
 
     describe('#componentWillMount', function () {
