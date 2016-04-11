@@ -15,8 +15,8 @@
     "test": "npm run lint && npm run cover"
   },
   "peerDependencies": {
-    "react": "^0.14",
-    "react-dom": "^0.14.0"
+    "react": "^0.14.0 || ^15.0.0"
+    "react-dom": "^0.14.0 || ^15.0.0"
   },
   "dependencies": {
     "immutable": "^3.3.0",
@@ -37,8 +37,8 @@
     "mocha": "^2.0",
     "pre-commit": "^1.0",
     "object-assign": "^4.0.1",
-    "react": "^0.14",
-    "react-dom": "^0.14.0",
+    "react": "^0.15.0",
+    "react-dom": "^0.15.0",
     "sinon": "^1.14.1"
   },
   "pre-commit": [
