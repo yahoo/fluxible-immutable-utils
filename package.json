@@ -15,14 +15,14 @@
     "test": "npm run lint && npm run cover"
   },
   "peerDependencies": {
-    "react": "^0.14.0",
-    "react-dom": "^0.14.0"
+    "react": "^0.14.0 || ^15.0.0",
+    "react-dom": "^0.14.0 || ^15.0.0"
   },
   "dependencies": {
-    "immutable": "^3.3.0",
     "fluxible": "^1.0.0",
     "fluxible-addons-react": "^0.2.0",
-    "react-addons-shallow-compare": "^0.14.0"
+    "immutable": "^3.3.0",
+    "shallowequal": "^0.2.0"
   },
   "devDependencies": {
     "babel": "^5.5.8",
@@ -33,12 +33,12 @@
     "grunt-babel": "^5.0.1",
     "grunt-contrib-clean": "^0.6.0",
     "istanbul": "^0.4.0",
-    "jsx-test": "^0.8.0",
+    "jsx-test": "^1.0.0",
     "mocha": "^2.0",
     "pre-commit": "^1.0",
     "object-assign": "^4.0.1",
-    "react": "^0.14.0",
-    "react-dom": "^0.14.0",
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0",
     "sinon": "^1.14.1"
   },
   "pre-commit": [
