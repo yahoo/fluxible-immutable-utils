@@ -70,7 +70,7 @@ describe('createImmutableStore', function () {
             expect(this.store.get(['spells', 'Arcane Intelect'])).to.equal(1);
         });
 
-        it('returns fallback if part in state is not defined', function () {
+        it('returns default value if part in state is not defined', function () {
             expect(this.store.get(['weapons', 3], 'knife')).to.equal('knife');
             expect(this.store.get('casts', 'Magic')).to.equal('Magic');
         });
