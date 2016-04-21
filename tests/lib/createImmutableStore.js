@@ -69,6 +69,11 @@ describe('createImmutableStore', function () {
             expect(this.store.get(['spells', 'Fire Ball'])).to.equal(3);
             expect(this.store.get(['spells', 'Arcane Intelect'])).to.equal(1);
         });
+
+        it('returns default value if part in state is not defined', function () {
+            expect(this.store.get(['weapons', 3], 'knife')).to.equal('knife');
+            expect(this.store.get('casts', 'Magic')).to.equal('Magic');
+        });
     });
 
     describe('#setState', function () {
