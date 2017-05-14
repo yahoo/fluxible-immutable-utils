@@ -34,7 +34,7 @@
     "grunt-contrib-clean": "^0.6.0",
     "istanbul": "^0.4.0",
     "jsx-test": "^1.0.0",
-    "mocha": "^2.0",
+    "mocha": "^3.4.0",
     "pre-commit": "^1.0",
     "object-assign": "^4.0.1",
     "react": "^15.0.0",
