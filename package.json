@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "babel": "^5.5.8",
-    "chai": "^3.0.0",
+    "chai": "^4.0.1",
     "coveralls": "^2.11.1",
     "eslint": "^0.17.0",
     "grunt": "^0.4.5",
