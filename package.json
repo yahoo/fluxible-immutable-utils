@@ -2,7 +2,7 @@
   "name": "fluxible-immutable-utils",
   "author": "dhood@yahoo-inc.com",
   "description": "A collection of utilities that provide convenience methods for using Immutable.js with a fluxible based application",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "main": "index.js",
   "repository": {
     "type": "git",
