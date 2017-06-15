@@ -1,3 +1,4 @@
+/* eslint no-warning-comments: off */
 /*globals describe,it,beforeEach,afterEach*/
 
 'use strict';
