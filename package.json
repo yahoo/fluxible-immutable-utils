@@ -22,7 +22,7 @@
     "fluxible": "^1.0.0",
     "fluxible-addons-react": "^0.2.0",
     "immutable": "^3.3.0",
-    "shallowequal": "^0.2.0"
+    "shallowequal": "^1.0.0"
   },
   "devDependencies": {
     "babel": "^5.5.8",
