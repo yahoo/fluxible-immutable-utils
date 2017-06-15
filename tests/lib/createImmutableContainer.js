@@ -5,13 +5,14 @@ Object.assign = require('object-assign');
 var Immutable = require('immutable');
 var React = require('react');
 var createImmutableContainer = require('../../lib/createImmutableContainer');
+var createReactClass = require('create-react-class');
 var createStore = require('fluxible/addons/createStore');
 var expect = require('chai').expect;
 var jsx = require('jsx-test');
 var sinon = require('sinon');
 
 describe('createImmutableContainer', function () {
-    var DummyComponent = React.createClass({
+    var DummyComponent = createReactClass({
         displayName: 'Dummy',
 
         render: function () {

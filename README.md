@@ -18,7 +18,7 @@ This method creates an immutable higher order component.
 
 ```js
 
-var MyComponent = React.createClass({
+var MyComponent = createReactClass({
     displayName: 'MyComponent',
 
     ...
@@ -88,7 +88,7 @@ Utility method that is set as the `onChange` method.  A default onChange functio
 
 var ImmutableMixin = require('fluxible-immutable-utils').ComponentMixin;
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'MyReactComponent',
     mixins: [ImmutableMixin],
     getStateOnChange: function () {
@@ -124,7 +124,7 @@ If you are using third party libraries/have a special case where you don't want 
 
 var ImmutableMixin = require('fluxible-immutable-utils').ComponentMixin;
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'MyReactComponent',
     mixins: [ImmutableMixin],
     statics: {

@@ -19,6 +19,7 @@
     "react-dom": "^0.14.0 || ^15.0.0"
   },
   "dependencies": {
+    "create-react-class": "^15.6.0",
     "fluxible": "^1.0.0",
     "fluxible-addons-react": "^0.2.0",
     "immutable": "^3.3.0",
