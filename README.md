@@ -1,5 +1,7 @@
 # fluxible-immutable-utils
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/yahoo/fluxible-immutable-utils.svg)](https://greenkeeper.io/)
+
 [![npm version](https://badge.fury.io/js/fluxible-immutable-utils.svg)](http://badge.fury.io/js/fluxible-immutable-utils)
 [![Build Status](https://travis-ci.org/yahoo/fluxible-immutable-utils.svg?branch=master)](https://travis-ci.org/yahoo/fluxible-immutable-utils)
 [![Dependency Status](https://david-dm.org/yahoo/fluxible-immutable-utils.svg)](https://david-dm.org/yahoo/fluxible-immutable-utils)
