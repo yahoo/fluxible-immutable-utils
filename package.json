@@ -10,9 +10,8 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "cover": "istanbul cover --dir artifacts -- _mocha tests --recursive --reporter spec",
-    "devtest": "mocha tests --recursive --reporter spec",
-    "test": "npm run lint && npm run cover"
+    "pretest": "npm run lint",
+    "test": "jenkins-mocha tests --recursive"
   },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0",
@@ -31,17 +30,15 @@
     "coveralls": "^2.13.1",
     "eslint": "^4.0.0",
     "filter-invalid-dom-props": "^1.0.0",
-    "istanbul": "^0.4.5",
+    "jenkins-mocha": "^4.1.2",
     "jsx-test": "^2.0.1",
-    "mocha": "^3.4.2",
     "pre-commit": "^1.2.2",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "sinon": "^2.3.4"
   },
   "pre-commit": [
-    "lint",
-    "devtest"
+    "test"
   ],
   "contributors": [
     "Mo Kouli <mkouli@yahoo-inc.com>",
