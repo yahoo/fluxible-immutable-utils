@@ -1,7 +1,6 @@
 /*globals describe, it, beforeEach, afterEach */
 
 'use strict';
-Object.assign = require('object-assign');
 var Immutable = require('immutable');
 var React = require('react');
 var createImmutableContainer = require('../../lib/createImmutableContainer');
