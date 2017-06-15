@@ -125,7 +125,6 @@ describe('ImmutableMixin', function () {
             });
         });
 
-
         it('should bypass certain state fields if are ignored', function (done) {
             var Component = createReactClass({
                 displayName: 'MyComponent',

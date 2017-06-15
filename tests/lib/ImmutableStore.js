@@ -29,7 +29,6 @@ describe('ImmutableStore', function () {
         });
     });
 
-
     var methods = ['dehydrate', 'getState'];
     methods.forEach(function (methodName) {
         describe('#' + methodName, function () {
