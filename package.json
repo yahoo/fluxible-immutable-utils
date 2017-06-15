@@ -18,7 +18,7 @@
     "react-dom": "^0.14.0 || ^15.0.0"
   },
   "dependencies": {
-    "create-react-class": "^15.6.0",
+    "create-react-class": "^15.5.0",
     "fluxible": "^1.4.0",
     "fluxible-addons-react": "^0.2.12",
     "immutable": "^3.8.1",
@@ -33,8 +33,8 @@
     "jenkins-mocha": "^4.1.2",
     "jsx-test": "^2.0.1",
     "pre-commit": "^1.2.2",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
+    "react": "^15.5.0",
+    "react-dom": "^15.5.0",
     "sinon": "^2.3.4"
   },
   "pre-commit": [
