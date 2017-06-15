@@ -8,6 +8,7 @@ var createImmutableContainer = require('../../lib/createImmutableContainer');
 var createReactClass = require('create-react-class');
 var createStore = require('fluxible/addons/createStore');
 var expect = require('chai').expect;
+var filterInvalidDOMProps = require('filter-invalid-dom-props').default
 var jsx = require('jsx-test');
 var sinon = require('sinon');
 
@@ -16,7 +17,7 @@ describe('createImmutableContainer', function () {
         displayName: 'Dummy',
 
         render: function () {
-            return React.createElement('div', this.props);
+            return React.createElement('div', filterInvalidDOMProps(this.props));
         }
     });
 
