@@ -1,8 +1,5 @@
-artifacts/
-build/
-coverage/
-node_modules/
-protractor-batch-artifacts/
-results/
-tmp/
-npm-*.log
+*.log
+*.tgz
+.nyc_output
+artifacts
+node_modules
