@@ -2,13 +2,13 @@
 
 'use strict';
 Object.assign = require('object-assign');
-var jsx = require('jsx-test');
-var expect = require('chai').expect;
 var Immutable = require('immutable');
 var React = require('react');
-var sinon = require('sinon');
 var createImmutableContainer = require('../../lib/createImmutableContainer');
 var createStore = require('fluxible/addons/createStore');
+var expect = require('chai').expect;
+var jsx = require('jsx-test');
+var sinon = require('sinon');
 
 describe('createImmutableContainer', function () {
     var DummyComponent = React.createClass({

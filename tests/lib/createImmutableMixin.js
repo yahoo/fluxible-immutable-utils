@@ -2,11 +2,11 @@
 
 'use strict';
 
-var jsx = require('jsx-test');
-var expect = require('chai').expect;
 var React = require('react');
-var sinon = require('sinon');
 var createImmutableMixin = require('../../lib/createImmutableMixin');
+var expect = require('chai').expect;
+var jsx = require('jsx-test');
+var sinon = require('sinon');
 
 describe('createImmutableMixin', function () {
     var config = {

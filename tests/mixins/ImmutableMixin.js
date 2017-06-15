@@ -2,12 +2,12 @@
 
 'use strict';
 
-var jsx = require('jsx-test');
-var expect = require('chai').expect;
-var React = require('react');
-var sinon = require('sinon');
 var Immutable = require('immutable');
 var ImmutableMixin = require('../../mixins/ImmutableMixin');
+var React = require('react');
+var expect = require('chai').expect;
+var jsx = require('jsx-test');
+var sinon = require('sinon');
 
 describe('ImmutableMixin', function () {
     describe('#objectsToIgnore', function () {

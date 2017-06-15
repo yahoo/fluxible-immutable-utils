@@ -6,8 +6,8 @@
 /*globals describe,it,beforeEach*/
 'use strict';
 
-var expect = require('chai').expect;
 var createImmutableStore = require('../../lib/createImmutableStore');
+var expect = require('chai').expect;
 
 describe('createImmutableStore', function () {
     var Store = createImmutableStore({
