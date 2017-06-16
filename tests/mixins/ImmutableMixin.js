@@ -1,13 +1,15 @@
+/* eslint no-warning-comments: off */
 /*globals describe,it,beforeEach,afterEach*/
 
 'use strict';
 
-var jsx = require('jsx-test');
-var expect = require('chai').expect;
-var React = require('react');
-var sinon = require('sinon');
 var Immutable = require('immutable');
 var ImmutableMixin = require('../../mixins/ImmutableMixin');
+var React = require('react');
+var createReactClass = require('create-react-class');
+var expect = require('chai').expect;
+var jsx = require('jsx-test');
+var sinon = require('sinon');
 
 describe('ImmutableMixin', function () {
     describe('#objectsToIgnore', function () {
@@ -20,7 +22,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should bypass certain props fields if they are ignored', function () {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
                 // TODO: simplify ignoreImmutableCheck
@@ -39,7 +41,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should bypass fields in both props and state if they at the top level', function () {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
                 ignoreImmutableCheck: {
@@ -62,7 +64,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should ignore certain props/state fields if they are marked SKIP_SHOULD_UPDATE', function () {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
                 ignoreImmutableCheck: {
@@ -83,7 +85,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should warn if next state is mutable', function (done) {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
                 render: function () {
@@ -106,7 +108,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should never warn if ignoreAllWarnings is true', function (done) {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
                 statics: {
@@ -124,9 +126,8 @@ describe('ImmutableMixin', function () {
             });
         });
 
-
         it('should bypass certain state fields if are ignored', function (done) {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
                 ignoreImmutableCheck: {
@@ -147,7 +148,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should merge w/ default certain state fields if are ignored', function (done) {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
                 ignoreImmutableCheck: {
@@ -178,7 +179,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should raise warnings if non immutable props are passed', function () {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
                 render: function () {
@@ -193,7 +194,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should not raise warnings for children', function () {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
                 render: function () {
@@ -206,7 +207,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('does not raise warning if props or state is null', function () {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 displayName: 'MyComponent',
                 mixins: [ImmutableMixin],
                 getInitialState: function () {
@@ -225,7 +226,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should raise warkings if there are non immutable states', function () {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 displayName: 'YComponent',
                 mixins: [ImmutableMixin],
                 getInitialState: function () {
@@ -245,7 +246,7 @@ describe('ImmutableMixin', function () {
 
     describe('#getStateOnChange', function () {
         it('should merge the getInitialState with getStateOnChange', function () {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 mixins: [ImmutableMixin],
                 getStateOnChange: function () {
                     return {foo: 'bar'};
@@ -267,7 +268,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should call getStateOnChange from onChange correctly', function (done) {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 mixins: [ImmutableMixin],
                 getStateOnChange: function (foo) {
                     if (foo) {
@@ -286,7 +287,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should call getStateOnChange to initialize state', function (done) {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 mixins: [ImmutableMixin],
                 getStateOnChange: function () {
                     done();
@@ -301,7 +302,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('shouldn\'t crash if getStateOnChange is not there', function () {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 mixins: [ImmutableMixin],
                 render: function () {
                     return null;
@@ -314,7 +315,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('should pass onChange arguments to getStateOnChange', function () {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 mixins: [ImmutableMixin],
                 getStateOnChange: function (data) {
                     return data || {};
@@ -339,7 +340,7 @@ describe('ImmutableMixin', function () {
             props = {foo: 'bar', list: Immutable.fromJS(['baz', 'foo'])};
             state = {list: Immutable.fromJS(['baz', 'foo'])};
 
-            var Component = React.createClass({
+            var Component = createReactClass({
                 mixins: [ImmutableMixin],
                 getStateOnChange: function () {
                     return state;
@@ -393,7 +394,7 @@ describe('ImmutableMixin', function () {
         });
 
         it('allows the shouldComponentUpdate to be overridden', function () {
-            var Component = React.createClass({
+            var Component = createReactClass({
                 mixins: [ImmutableMixin],
                 shouldComponentUpdate: function () {
                     return 'override';

@@ -26,11 +26,15 @@ function warnNonImmutable(component, prop) {
 }
 
 function merge(dest, src) {
-    dest || (dest = {});
+    if (!dest) {
+        dest = {};
+    }
 
-    src && typeof src === 'object' && Object.keys(src).forEach(function mergeCb(prop) {
-        dest[prop] = src[prop];
-    });
+    if (typeof src === 'object') {
+        Object.keys(src).forEach(function mergeCb(prop) {
+            dest[prop] = src[prop];
+        });
+    }
 
     return dest;
 }

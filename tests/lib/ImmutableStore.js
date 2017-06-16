@@ -6,8 +6,8 @@
 /*globals describe,it,beforeEach*/
 'use strict';
 
-var expect = require('chai').expect;
 var ImmutableStore = require('../../lib/ImmutableStore');
+var expect = require('chai').expect;
 
 describe('ImmutableStore', function () {
     beforeEach(function () {
@@ -28,7 +28,6 @@ describe('ImmutableStore', function () {
             expect(this.store._state.toJS()).to.deep.equal(state);
         });
     });
-
 
     var methods = ['dehydrate', 'getState'];
     methods.forEach(function (methodName) {
