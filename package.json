@@ -20,7 +20,7 @@
   "dependencies": {
     "create-react-class": "^15.5.0",
     "fluxible": "^1.4.0",
-    "fluxible-addons-react": "^0.2.12",
+    "fluxible-addons-react": "^1.0.0",
     "immutable": "^3.8.1",
     "inherits": "^2.0.3",
     "shallowequal": "^1.0.1"
