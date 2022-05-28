@@ -31,7 +31,7 @@
     "eslint": "^4.0.0",
     "filter-invalid-dom-props": "^1.0.0",
     "jenkins-mocha": "^4.1.2",
-    "jsx-test": "^2.0.1",
+    "jsx-test": "^3.0.2",
     "pre-commit": "^1.2.2",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
