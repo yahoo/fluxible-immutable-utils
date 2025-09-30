@@ -1,3 +1,6 @@
+> ⚠️ **DEPRECATED / END-OF-LIFE (EOL)** — `fluxible-immutable-utils` is unmaintained as of **2025-10-01**.
+> No new features, issues, PRs, or security fixes will be provided.
+
 # fluxible-immutable-utils
 
 [![npm version](https://badge.fury.io/js/fluxible-immutable-utils.svg)](http://badge.fury.io/js/fluxible-immutable-utils)
